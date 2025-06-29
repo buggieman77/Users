@@ -1,8 +1,8 @@
 {
-   "MySQL DB function": {
-      "prefix": "mysqldbfunction",
+   "MySQL getDatabase function": {
+      "prefix": "fang",
       "body": [
-         "function mysqlDatabase(",
+         "function getDatabase(",
          "   \\$dbName,",
          "   \\$dbTableName,",
          "   string \\$hostname = \"localhost\",",
@@ -40,14 +40,25 @@
       ],
       "description": "mysqlDatabase function"
    },
-   "Calling MySQL DB Function": {
-      "prefix": "mysqldbfunctioncall",
+   "Calling getDatabase Function": {
+      "prefix": "kol",
       "body": [
-         "require \"mysqldb.php\";",
+         "require \"mysql.php\";",
          "",
          "\\$${1:datas}Index = 1;",
-         "\\$${1:datas} = mysqlDatabase(\"${2:database name}\",\"${3:database table name}\");${0}",
+         "\\$${1:datas} = getDatabase(\"${2:database name}\",\"${3:database table name}\");${0}",
       ],
-      "description": "calling mysqlDatabase"
+      "description": "calling getDatabase"
+   },
+   "Try and Catch Error": {
+      "prefix": "trc",
+      "body": [
+         "try {",
+         "   ${0}",
+         "} catch (Throwable \\$error) {",
+         "   die(\"${1:Database} Error: \" . \\$error -> getMessage());",
+         "}"
+      ],
+      "description": "error handling"
    },
 }
