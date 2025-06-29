@@ -1,0 +1,177 @@
+isi kalo ada [.....] ,sesuai arahan bro
+
+see
+=> list command alias
+
+Ctrl + C
+=> keluar dari script interaktif / batalin script
+
+back  
+=> balik ke folder sebelumnya 
+=> alias cd ..
+
+ls 
+=> liat apa aja isi foldernya
+
+file [nama-file.ext] 
+=> buat file baru
+=> alias touch
+
+folder [nama folder] 
+=> bikin folder 
+=> alias mkdir
+
+htdocs
+=> buka folder htdocs xampp
+
+mysql
+=> buka mysql.exe
+
+xampp
+=> buka xampp control panel
+
+chrome
+=> buka google chrome
+
+gpt 
+=> masuk ke chat gpt
+
+youtube 
+=> masuk ke youtube
+
+github 
+=> masuk ke github
+
+login-github 
+=> Menghubungkan GitHub CLI dengan akun GitHub
+=> membuat terminal punya fitur github
+
+logout-github 
+=> logout lewat terminal 
+=> harus login kalo mau pake fitur github lagi diterminal
+
+check-github 
+=> cek account siapa yang lagi login
+
+webpack 
+=> bikin frame pake webpack
+
+project-initial 
+=> git init-add-commit sekaligus
+
+push-github 
+=> bikin repo baru di github terus langsung di push
+
+clone [url-repository] 
+=> copy repository dari remote
+
+upstream [nama remote] [nama branch] 
+=> mendaftarkan tracking branch yang baru dibuat ke remote
+
+check-branch
+=> check branch sudah di tracking atau blum di remote
+
+push 
+=> mengirim commit dari branch lokal (lagi aktif) yang udah di tracking, ke remote repository
+
+add 
+=> alias git add .
+
+status 
+=> alias git status
+
+commit 
+=> bikin commit ke modifeid 
+=> alias git commit -a
+
+amend 
+=> edit isi commit sebelumnya + buat pesan commit baru
+
+reflog [nama branch] 
+=> tampilin isi riwayat head dari branch yang di tentuin
+
+back-to [hash-commit] 
+=> kembali ke hash yang udah di tentuin (bisa buat delete/undo commit di relfog)
+=> contoh : kalo dari comit d ke comit b maka comit d dan c akan masuk ke relog
+
+git-size 
+=> ukuran total folder .git di disk
+
+git-detail 
+=> rincian isi objek Git dalam folder .git
+
+log 
+=> alias git log
+
+short 
+=> alias git log --pretty=short
+
+fetch 
+=> fetching repo 
+=> alias git fetch
+
+graph 
+=> liat graph 
+=> alias git log --all --decorate --oneline --graph
+
+main 
+=> checkout ke branch main
+
+check-merge 
+=> check branch yang udah di merge
+
+check-unmerge 
+=> cheeck branch yang belom di merge
+
+branch [nama branch baru] 
+=> branch baru 
+=> alias git checkout -b
+
+delete [nama branchnya apa] 
+=> hapus branch yang ada di local
+
+checkout [branch/commit hash] 
+=> git checkout
+
+new-branch [nama branch baru] 
+=> bikin branch kosong, tanpa sejarah 
+=> alias git checkout --orphan
+
+merge [nama branch] 
+=> alias git merge
+
+cancel-merge 
+=> lagi dalam merge state, terus cancel,gajadi merge
+
+reset-merge 
+=> lebih kasar dari cancel-meger, pake kalo di rekomen sama git aja
+=> It is recommended that you use git reset --merge
+
+squash [nama branch] 
+=> gabungkan semua perubahan dari branch lain jadi 1 commit.
+
+pick [hash commit] 
+=> ambil satu commmit dari branch lain buat taro di branch aktif
+
+local-ip 
+=> cek ip local
+
+public-ip 
+=> cek ip public
+
+public-ip-detail 
+=> cek detail ip public 
+
+ssh
+=> buka folder ssh
+
+new-ssh
+=> buat ssh baru
+
+set 
+=> tambahin alias
+
+apply 
+=> abis set langsung apply ya bro 
+=> alias source ~/.bashrc
+

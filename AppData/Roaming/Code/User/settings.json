@@ -1,0 +1,104 @@
+{
+  "workbench.startupEditor": "none",
+  "workbench.settings.applyToAllProfiles": [
+    "editor.mouseWheelZoom",
+    "editor.fontFamily",
+    "editor.fontSize",
+    "window.title",
+    "editor.quickSuggestions",
+    "editor.suggestOnTriggerCharacters",
+    "editor.parameterHints.enabled",
+    "editor.hover.enabled",
+    "editor.acceptSuggestionOnCommitCharacter"
+  ],
+  "editor.renderWhitespace": "all",
+  "editor.cursorBlinking": "expand",
+  "editor.mouseWheelZoom": true,
+  "workbench.iconTheme": "vscode-icons",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "workbench.sideBar.location": "right",
+  "editor.lineHeight": 27,
+  "files.autoSave": "onWindowChange",
+  "editor.fontFamily": "'Cascadia Code', Consolas, 'Courier New', monospace",
+  "editor.renderLineHighlight": "none",
+  "editor.matchBrackets": "near",
+  "editor.minimap.enabled": false,
+  "blade.format.enable": true,
+  "window.customTitleBarVisibility": "windowed",
+  "workbench.navigationControl.enabled": false,
+  "workbench.activityBar.location": "top",
+  "zenMode.centerLayout": false,
+  "zenMode.fullScreen": false,
+  "vetur.format.options.tabSize": 4,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 3,
+  "workbench.colorTheme": "Parsinta Exclusive",
+  "glassit.alpha": 230,
+  "emmet.includeLanguages": {
+    "vue-html": "html",
+    "javascript": "javascriptreact",
+    "javascript-html": "html"
+  },
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "expanded",
+      "extensionName": ".css",
+      "savePath": "/css",
+      "savePathReplacementPairs": null
+    }
+  ],
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "window.newWindowDimensions": "maximized",
+  "terminal.integrated.mouseWheelZoom": true,
+  "terminal.integrated.tabs.defaultIcon": "copilot-large",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "window.title": "${dirty}${rootName}${separator}${profileName}${separator}${activeEditorShort}",
+  "workbench.settings.showSuggestions": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.wordBasedSuggestions": "allDocuments",
+  "editor.hover.enabled": true,
+  "bootstrapIntelliSense": {
+    "enable": false,
+    "bsVersion": "5.3.6",
+    "useLocalFile": false,
+    "cssFilePath": "",
+    "languageSupport": []
+  },
+  "debug.disassemblyView.showSourceCode": false,
+  "php.validate.executablePath": "C:/xampp/php/php.exe",
+  "intelephense.environment.phpVersion": "8.2.0",
+  "php.inlayHints.parameters.enabled": false,
+  "php.inlayHints.parameters.suppressNameMatchingValue": true,
+  "php.inlayHints.parameters.byReference": false,
+  "php.inlayHints.types.lambdaParameter": false,
+  "php.format.rules.callParametersNewLineAfterLeftParen": false,
+  "php.format.rules.addCommaAfterLastCallParameter": false,
+  "intelephense.completion.functionReturnType": false,
+  "php.problems.exclude": {
+    "**/*": ["php_remove_redundant_closing_tag"]
+  },
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "php": false
+  },
+  "editor.snippetSuggestions": "inline",
+  "editor.suggest.showSnippets": true,
+  "[snippets]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+  },
+  "terminal.integrated.fontSize": 13
+}

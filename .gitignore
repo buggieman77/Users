@@ -1,0 +1,32 @@
+# ========== Ignore semua file dan folder di root ==========
+/*
+
+# ========== AppData exceptions ==========
+!AppData/
+AppData/*
+!AppData/Roaming/
+AppData/Roaming/*
+!AppData/Roaming/Code/
+AppData/Roaming/Code/*
+!AppData/Roaming/Code/User/
+AppData/Roaming/Code/User/*
+!AppData/Roaming/Code/User/snippets/
+!AppData/Roaming/Code/User/sync/
+
+# ========== Documents exceptions ==========
+!Documents/
+Documents/*
+!Documents/Coding/
+Documents/Coding/*
+!Documents/Coding/Script/
+!Documents/Coding/Tutorial/
+Documents/Coding/Tutorial/*
+!Documents/Coding/Tutorial/JavaScript-Module/
+
+# ========== Specific config files ==========
+!/.bashrc
+!/.bash_profile
+!/.gitconfig
+!/.gitignore
+!/AppData/Roaming/Code/User/settings.json
+!/AppData/Roaming/Code/User/keybindings.json

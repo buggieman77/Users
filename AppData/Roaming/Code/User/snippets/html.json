@@ -1,0 +1,52 @@
+{
+   "PHP Tag": {
+      "prefix": "php",
+      "body": [
+         "<?php",
+         "",
+         "${0}",
+         "",
+         "?>"
+      ],
+      "description": "PHP TAG"
+   },
+   "PHP Echo": {
+      "prefix": "text",
+      "body": [
+         "<?= \\$${0} ?>"
+      ],
+      "description": "PHP Echo"
+   },
+   "Form Element": {
+      "prefix": "formel",
+      "body": [
+         "<label for=\"${1:username}\">${1:username} :</label>\n<input type=\"text\" id=\"${1:username}\" placeholder=\"${1:username}\" name=\"${1:username}\" required>"
+      ],
+      "description": "Form Element"
+   },
+   "submit button": {
+      "prefix": "subb",
+      "body": [
+         "<button type=\"submit\" name=\"submit\">${0}</button>"
+      ],
+      "description": "Form Element"
+   },
+   "table tag": {
+      "prefix": "table",
+      "body": [
+         "<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\">",
+         "   ${0}",
+         "</table>"
+      ],
+      "description": "table tag"
+   },
+   "MySQL fetching": {
+      "prefix": "mysqlfetch",
+      "body": [
+         "<?php while (\\$data = mysqli_fetch_assoc(\\$datas)) : ?>",
+         "   ${0}",
+         "<?php endwhile ?>"
+      ],
+      "description": "table tag"
+   },
+}

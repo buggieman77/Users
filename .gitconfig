@@ -1,0 +1,8 @@
+[user]
+	email = gooplaynow@gmail.com
+	name = buggieman77
+[core]
+	editor = code --wait
+	autocrlf = input
+[init]
+	defaultBranch = main
