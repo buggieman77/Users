@@ -8,16 +8,16 @@
          "",
          "?>"
       ],
-      "description": "PHP TAG"
+      "description": "insert php tag"
    },
    "PHP Echo": {
-      "prefix": "text",
+      "prefix": "echo",
       "body": [
          "<?= \\$${0} ?>"
       ],
-      "description": "PHP Echo"
+      "description": "insert php echo"
    },
-   "Form Element": {
+   "Form Element tag": {
       "prefix": "formel",
       "body": [
          "<label for=\"${1:username}\">${1:username} :</label>\n<input type=\"text\" id=\"${1:username}\" placeholder=\"${1:username}\" name=\"${1:username}\" required>"
@@ -31,7 +31,7 @@
       ],
       "description": "Form Element"
    },
-   "table tag": {
+   "Table tag": {
       "prefix": "table",
       "body": [
          "<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\">",
@@ -40,13 +40,14 @@
       ],
       "description": "table tag"
    },
-   "MySQL fetching": {
-      "prefix": "mysqlfetch",
+   "PHP Show MySQL Datasbase": {
+      "prefix": "mysqldb",
       "body": [
-         "<?php while (\\$data = mysqli_fetch_assoc(\\$datas)) : ?>",
+         "<?php foreach (\\$${1:datas} as \\$${2:data}) : ?>",
          "   ${0}",
-         "<?php endwhile ?>"
+         "<?php \\$${1:datas}Index++ ?>",
+         "<?php endforeach ?>"
       ],
-      "description": "table tag"
+      "description": "Show MySQL Datasbase"
    },
 }
