@@ -72,8 +72,8 @@
     "cssFilePath": "",
     "languageSupport": []
   },
-  "debug.disassemblyView.showSourceCode": false,
-  "php.validate.executablePath": "C:/xampp/php/php.exe",
+"debug.disassemblyView.showSourceCode": false,
+"php.validate.executablePath": "C:/xampp/php/php.exe",
   "intelephense.environment.phpVersion": "8.2.0",
   "php.inlayHints.parameters.enabled": false,
   "php.inlayHints.parameters.suppressNameMatchingValue": true,

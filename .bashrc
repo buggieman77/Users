@@ -2,6 +2,7 @@ alias back='cd ..'
 alias file='touch'
 alias folder='mkdir'
 alias Latihan='cd ~/Documents/Coding/Latihan'
+
 alias Project='cd ~/Documents/Coding/Project'
 alias Tutorial='cd ~/Documents/Coding/Tutorial'
 alias Script='explorer.exe "$(cygpath -w ~/Documents/Coding/Script)"'
@@ -17,35 +18,21 @@ alias gpt='explorer "https://chatgpt.com"'
 alias youtube='explorer "https://youtube.com"'
 alias github='explorer "https://github.com"'
 
+
 alias webpack='bash ~/Documents/Coding/Script/webpack-frame.sh'
 alias project-initial='bash ~/Documents/Coding/Script/new-project-initial-commit.sh'
-alias push-github='bash ~/Documents/Coding/Script/push-github.sh'
 
 alias local-ip='ipconfig | grep "IPv4" | sed "s/.*: //"'
 alias public-ip-detail='curl ipinfo.io'
 alias public-ip='curl ifconfig.me'
 
+alias login-github='gh auth login'
+alias logout-github='gh auth logout'
+alias check-github='gh auth status'
 
-alias branch='git checkout -b'
-alias new-branch='git checkout --orphan'
-alias log='git log'
-alias graph='git log --all --decorate --oneline --graph'
-alias add='git add .'
-alias status='git status'
-alias checkout='git checkout'
-alias fetch='git fetch'
+alias push-github='bash ~/Documents/Coding/Script/push-github.sh'
+alias repo-check='bash ~/Documents/Coding/Script/github-repo-check.sh'
 
-alias set='code ~/.bashrc'
-alias apply='source ~/.bashrc'
-
-alias edit='chmod 644'
-alias read-only='chmod 444'
-
-alias short='git log --pretty=short'
-alias amend='git commit --amend'
-alias commit='git commit -a'
-
-alias main='git checkout main'
 alias merge='git merge'
 alias squash='git merge --squash'
 alias pick='git cherry-pick'
@@ -55,22 +42,35 @@ alias delete='git branch -D'
 alias check-merge='git branch --merge'
 alias check-unmerge='git branch --no-merged'
 
+alias check-branch='git branch -vv'
+alias branch='git checkout -b'
+alias new-branch='git checkout --orphan'
+alias main='git checkout main'
+alias checkout='git checkout'
+
+alias log='git log'
+alias graph='git log --all --decorate --oneline --graph'
+alias short='git log --pretty=short'
+
 alias clone='git clone'
 alias upstream='git push -u'
-alias check-branch='git branch -vv'
+alias fetch='git fetch'
+
+alias status='git status'
+alias add='git add .'
+
+alias amend='git commit --amend'
+alias commit='git commit -a'
+
+alias set='code ~/.bashrc'
+alias apply='source ~/.bashrc'
+
 alias push='git push'
 alias back-to='git reset --hard'
 alias reflog='git reflog show'
 alias pull='git pull --rebase'
 alias rebase='git rebase'
 alias remote='git remote -v'
-
-alias git-size='du -sh .git'
-alias git-detail='git count-objects -vH'
-
-alias login-github='gh auth login'
-alias logout-github='gh auth logout'
-alias check-github='gh auth status'
 
 alias rename-pc='bash ~/Documents/Coding/Script/rename-pc.sh'
 alias ls='ls --color=auto'

@@ -25,7 +25,7 @@ htdocs
 => buka folder htdocs xampp
 
 mysql
-=> buka mysql.exe
+=> buka terminal mysql.exe
 
 xampp
 => buka xampp control panel
@@ -61,6 +61,9 @@ project-initial
 
 push-github 
 => bikin repo baru di github terus langsung di push
+
+repo-check
+=> check repo github
 
 clone [url-repository] 
 => copy repository dari remote
@@ -117,12 +120,6 @@ graph
 main 
 => checkout ke branch main
 
-check-merge 
-=> check branch yang udah di merge
-
-check-unmerge 
-=> cheeck branch yang belom di merge
-
 branch [nama branch baru] 
 => branch baru 
 => alias git checkout -b
@@ -136,6 +133,13 @@ checkout [branch/commit hash]
 new-branch [nama branch baru] 
 => bikin branch kosong, tanpa sejarah 
 => alias git checkout --orphan
+
+
+check-merge 
+=> check branch yang udah di merge
+
+check-unmerge 
+=> cheeck branch yang belom di merge
 
 merge [nama branch] 
 => alias git merge
