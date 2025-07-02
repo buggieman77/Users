@@ -20,7 +20,7 @@
    "Form Element tag": {
       "prefix": "formel",
       "body": [
-         "<label for=\"${1:username}\">${1:username} :</label>\n<input type=\"text\" id=\"${1:username}\" placeholder=\"${1:username}\" name=\"${1:username}\" required>"
+         "<label for=\"${1:label}\">${0}${1:label name} :</label>\n<input type=\"text\" id=\"${1:label}\" placeholder=\"${1:label}\" name=\"${1:label}\" required>"
       ],
       "description": "Form Element"
    },
@@ -40,14 +40,48 @@
       ],
       "description": "table tag"
    },
-   "PHP Show MySQL Datasbase": {
+   "PHP MYSQL READ": {
       "prefix": "mysqldb",
       "body": [
-         "<?php foreach (\\$${1:datas} as \\$${2:data}) : ?>",
+         "<?php foreach (\\$${1:data}s as \\$index => \\$${1:data}) : ?>",
          "   ${0}",
-         "<?php \\$${1:datas}Index++ ?>",
          "<?php endforeach ?>"
       ],
-      "description": "Show MySQL Datasbase"
+      "description": "SHOW MYSQL DATABASE"
+   },
+   "PHP MYSQL DELETE": {
+      "prefix": "mysqldb",
+      "body": [
+         "<form",
+         "  action=\"\"",
+         "  method=\"post\"",
+         "  style=\"display:inline\"",
+         "  data-${2:field}='<?= htmlspecialchars(json_encode(\\$${1:data}[\"${2:field}\"]), ENT_QUOTES, \"UTF-8\") ?>'",
+         "  onsubmit=\"",
+         "  let ${2:field} = htmlDecode(JSON.parse(this.dataset.${2:field}));",
+         "  return confirm('want to delete ' + ${2:field} + ' ?')\"",
+         ">",
+         "     <input type=\"hidden\" name=\"id\" value=\"<?= \\$${1:data}[\"id\"] ?>\">",
+         "     <input type=\"hidden\" name=\"${2:field}\" value=\"<?= (\\$${1:data}[\"${2:field}\"]) ?>\">",
+         "     <input type=\"hidden\" name=\"action\" value=\"delete\">",
+         "     <button type=\"submit\">DELETE</button>",
+         "</form>",
+         "",
+         "<script>",
+         "  function htmlDecode(input) {",
+         "  let element = document.createElement('textarea');",
+         "  element.innerHTML = input;",
+         "  return element.value;",
+         "  }",
+         "</script>"
+      ],
+      "description": "BUTTON MYSQL DELETE"
+   },
+   "PHP MYSQL INSERT": {
+      "prefix": "mysqldb",
+      "body": [
+         "<a href=\"new-${1:data}.php\">Add New ${1:data}</a>"
+      ],
+      "description": "SHOW MYSQL DATABASE"
    },
 }
