@@ -21,5 +21,9 @@
   {
     "key": "ctrl+k up",
     "command": "workbench.files.action.collapseExplorerFolders"
+  },
+  {
+    "key": "ctrl+k ctrl+o",
+    "command": "workbench.action.closeOtherEditors"
   }
 ]

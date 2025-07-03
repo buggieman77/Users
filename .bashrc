@@ -56,8 +56,9 @@ alias clone='git clone'
 alias upstream='git push -u'
 alias fetch='git fetch'
 
-alias status='git status'
 alias add='git add .'
+alias delete-track='git rm -r --cached'
+alias status='git status'
 
 alias amend='git commit --amend'
 alias commit='git commit -a'

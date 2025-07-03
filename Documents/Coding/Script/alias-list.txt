@@ -80,6 +80,9 @@ push
 add 
 => alias git add .
 
+delete-track [nama file/folder]
+=> alias git rm -rv --cached
+
 status 
 => alias git status
 
