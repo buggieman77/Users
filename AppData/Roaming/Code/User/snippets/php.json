@@ -189,6 +189,14 @@
       ],
       "description": "MYSQL CREATE"
    },
+   "CALLBACK READ MYSQL DATABASE  FUNCTION": {
+      "prefix": "kolbek",
+      "body": [
+         "// Ambil seluruh data ${1:nama data} dari database dan simpan ke array $${1:nama data}s",
+         "\\$${1:nama data}s = mysql(\"read\");"
+      ],
+      "description": "MYSQL READ"
+   },
    "CALLBACK UPDATED MYSQL DATABASE  FUNCTION": {
       "prefix": "kolbek",
       "body": [
@@ -211,14 +219,6 @@
          "}"
       ],
       "description": "MYSQL UPDATED"
-   },
-   "CALLBACK READ MYSQL DATABASE  FUNCTION": {
-      "prefix": "kolbek",
-      "body": [
-         "// Ambil seluruh data ${1:nama data} dari database dan simpan ke array $${1:nama data}s",
-         "\\$${1:nama data}s = mysql(\"read\");"
-      ],
-      "description": "MYSQL READ"
    },
    "CALLBACK DELETE MYSQL DATABASE  FUNCTION": {
       "prefix": "kolbek",
