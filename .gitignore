@@ -24,7 +24,6 @@ AppData/Roaming/Code/*
 !AppData/Roaming/Code/User/
 AppData/Roaming/Code/User/*
 !AppData/Roaming/Code/User/snippets/
-!AppData/Roaming/Code/User/sync/
 
 # ========== Documents exceptions ==========
 !Documents/
