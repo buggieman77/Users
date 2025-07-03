@@ -17,6 +17,13 @@
       ],
       "description": "insert php echo"
    },
+   "HIDDEN INPUT ELEMENT TAG": {
+      "prefix": "formel",
+      "body": [
+         "<input type=\"hidden\" name=\"${1:action}\" value=\"${2}\">${0}"
+      ],
+      "description": "Form Element"
+   },
    "FORM ELEMENT TAG": {
       "prefix": "formel",
       "body": [
