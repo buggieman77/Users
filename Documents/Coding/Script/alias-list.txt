@@ -80,8 +80,12 @@ push
 add 
 => alias git add .
 
+check-track
+=> check file apa aja yang di tracking
+
 delete-track [nama file/folder]
 => alias git rm -rv --cached
+=> hapus folder atau file yang di track
 
 status 
 => alias git status

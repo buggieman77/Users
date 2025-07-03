@@ -76,7 +76,7 @@
          ">",
          "      <input type=\"hidden\" name=\"id\" value=\"<?= \\$novel[\"id\"] ?>\">",
          "      <input type=\"hidden\" name=\"title\" value=\"<?= (\\$novel[\"title\"]) ?>\">",
-         "      <input type=\"hidden\" name=\"action\" value=\"update\">",
+         "      <input type=\"hidden\" name=\"action\" value=\"insert\">",
          "      <button type=\"submit\">EDIT</button>",
          "</form>",
       ],
