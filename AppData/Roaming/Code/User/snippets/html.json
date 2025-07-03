@@ -1,5 +1,5 @@
 {
-   "PHP Tag": {
+   "PHP TAG": {
       "prefix": "php",
       "body": [
          "<?php",
@@ -10,28 +10,28 @@
       ],
       "description": "insert php tag"
    },
-   "PHP Echo": {
+   "PHP ECHO": {
       "prefix": "echo",
       "body": [
          "<?= \\$${0} ?>"
       ],
       "description": "insert php echo"
    },
-   "Form Element tag": {
+   "FORM ELEMENT TAG": {
       "prefix": "formel",
       "body": [
          "<label for=\"${1:label}\">${0}${1:label name} :</label>\n<input type=\"text\" id=\"${1:label}\" placeholder=\"${1:label}\" name=\"${1:label}\" required>"
       ],
       "description": "Form Element"
    },
-   "submit button": {
+   "SUBMIT BUTTON": {
       "prefix": "subb",
       "body": [
          "<button type=\"submit\" name=\"submit\">${0}</button>"
       ],
       "description": "Form Element"
    },
-   "Table tag": {
+   "TABLE TAG": {
       "prefix": "table",
       "body": [
          "<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\">",
@@ -53,34 +53,32 @@
       "prefix": "mysqldb",
       "body": [
          "<form",
-         "  action=\"\"",
-         "  method=\"post\"",
-         "  style=\"display:inline\"",
-         "  data-${2:field}='<?= htmlspecialchars(json_encode(\\$${1:data}[\"${2:field}\"]), ENT_QUOTES, \"UTF-8\") ?>'",
-         "  onsubmit=\"",
-         "  let ${2:field} = htmlDecode(JSON.parse(this.dataset.${2:field}));",
-         "  return confirm('want to delete ' + ${2:field} + ' ?')\"",
+         "  action = \"delete-${1:data}.php\"",
+         "  method = \"post\"",
+         "  data-action = \"delete\"",
+         "  data-name = \"<?= htmlspecialchars(json_encode(\\$${1:data}[\"${2:field}\"]), ENT_QUOTES, \"UTF-8\") ?>\"",
+         "  onsubmit=\"return showConfirm(this.dataset.action, this.dataset.name)\"",
          ">",
-         "     <input type=\"hidden\" name=\"id\" value=\"<?= \\$${1:data}[\"id\"] ?>\">",
-         "     <input type=\"hidden\" name=\"${2:field}\" value=\"<?= (\\$${1:data}[\"${2:field}\"]) ?>\">",
-         "     <input type=\"hidden\" name=\"action\" value=\"delete\">",
-         "     <button type=\"submit\">DELETE</button>",
+         "   <input type=\"hidden\" name=\"id\" value=\"<?= \\$${1:data}[\"id\"] ?>\">",
+         "   <input type=\"hidden\" name=\"${2:field}\" value=\"<?= (\\$${1:data}[\"${2:field}\"]) ?>\">",
+         "   <input type=\"hidden\" name=\"action\" value=\"delete\">",
+         "   <button type=\"submit\">DELETE</button>",
          "</form>",
-         "",
-         "<script>",
-         "  function htmlDecode(input) {",
-         "  let element = document.createElement('textarea');",
-         "  element.innerHTML = input;",
-         "  return element.value;",
-         "  }",
-         "</script>"
       ],
       "description": "BUTTON MYSQL DELETE"
    },
-   "PHP MYSQL INSERT": {
+   "PHP MYSQL CREATE": {
       "prefix": "mysqldb",
       "body": [
-         "<a href=\"new-${1:data}.php\">Add New ${1:data}</a>"
+         "<form",
+         "   action = \"new-novel.php\"",
+         "   method = \"post\"",
+         ">",
+         "      <input type=\"hidden\" name=\"id\" value=\"<?= \\$novel[\"id\"] ?>\">",
+         "      <input type=\"hidden\" name=\"title\" value=\"<?= (\\$novel[\"title\"]) ?>\">",
+         "      <input type=\"hidden\" name=\"action\" value=\"update\">",
+         "      <button type=\"submit\">EDIT</button>",
+         "</form>",
       ],
       "description": "SHOW MYSQL DATABASE"
    },
