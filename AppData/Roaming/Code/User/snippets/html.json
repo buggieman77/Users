@@ -1,21 +1,10 @@
 {
-   "PHP TAG": {
-      "prefix": "php",
+   "FORM ELEMENT TAG": {
+      "prefix": "formel",
       "body": [
-         "<?php",
-         "",
-         "${0}",
-         "",
-         "?>"
+         "<label for=\"${1:label}\">${0}${1:label name} :</label>\n<input type=\"text\" id=\"${1:label}\" placeholder=\"${1:label}\" name=\"${1:label}\" required>"
       ],
-      "description": "insert php tag"
-   },
-   "PHP ECHO": {
-      "prefix": "echo",
-      "body": [
-         "<?= \\$${0} ?>"
-      ],
-      "description": "insert php echo"
+      "description": "Form Element"
    },
    "HIDDEN INPUT ELEMENT TAG": {
       "prefix": "formel",
@@ -24,15 +13,8 @@
       ],
       "description": "Form Element"
    },
-   "FORM ELEMENT TAG": {
+   "SUBMIT BUTTON ": {
       "prefix": "formel",
-      "body": [
-         "<label for=\"${1:label}\">${0}${1:label name} :</label>\n<input type=\"text\" id=\"${1:label}\" placeholder=\"${1:label}\" name=\"${1:label}\" required>"
-      ],
-      "description": "Form Element"
-   },
-   "SUBMIT BUTTON": {
-      "prefix": "subb",
       "body": [
          "<button type=\"submit\" name=\"submit\">${0}</button>"
       ],
@@ -47,8 +29,36 @@
       ],
       "description": "table tag"
    },
+   "PHP TAG": {
+      "prefix": "php",
+      "body": [
+         "<?php",
+         "",
+         "${0}",
+         "",
+         "?>"
+      ],
+      "description": "insert php tag"
+   },
+   "PHP ECHO TAG": {
+      "prefix": "php",
+      "body": [
+         "<?= \\$${0} ?>"
+      ],
+      "description": "insert php echo"
+   },
+   "PHP MYSQL CREATE": {
+      "prefix": "php",
+      "body": [
+         "<form action=\"new-${1:data}.php\" method=\"post\">",
+         "  <input type=\"hidden\" name=\"action\" value=\"insert\">",
+         "  <button type=\"submit\">Add New ${1:data}</button>",
+         "</form>"
+      ],
+      "description": "SHOW MYSQL DATABASE"
+   },
    "PHP MYSQL READ": {
-      "prefix": "mysqldb",
+      "prefix": "php",
       "body": [
          "<?php foreach (\\$${1:data}s as \\$index => \\$${1:data}) : ?>",
          "   ${0}",
@@ -57,7 +67,7 @@
       "description": "SHOW MYSQL DATABASE"
    },
    "PHP MYSQL DELETE": {
-      "prefix": "mysqldb",
+      "prefix": "php",
       "body": [
          "<form",
          "  action = \"delete-${1:data}.php\"",
@@ -73,20 +83,5 @@
          "</form>",
       ],
       "description": "BUTTON MYSQL DELETE"
-   },
-   "PHP MYSQL CREATE": {
-      "prefix": "mysqldb",
-      "body": [
-         "<form",
-         "   action = \"new-novel.php\"",
-         "   method = \"post\"",
-         ">",
-         "      <input type=\"hidden\" name=\"id\" value=\"<?= \\$novel[\"id\"] ?>\">",
-         "      <input type=\"hidden\" name=\"title\" value=\"<?= (\\$novel[\"title\"]) ?>\">",
-         "      <input type=\"hidden\" name=\"action\" value=\"insert\">",
-         "      <button type=\"submit\">EDIT</button>",
-         "</form>",
-      ],
-      "description": "SHOW MYSQL DATABASE"
    },
 }
