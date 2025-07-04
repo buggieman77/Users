@@ -100,5 +100,7 @@
   "[php]": {
     "editor.defaultFormatter": "junstyle.php-cs-fixer"
   },
-  "terminal.integrated.fontSize": 13
+  "terminal.integrated.fontSize": 13,
+  "genieai.enableConversationHistory": true,
+  "bitoAI.appearance.fontSize (Match with IDE Font)": false
 }

@@ -25,5 +25,43 @@
   {
     "key": "ctrl+k ctrl+o",
     "command": "workbench.action.closeOtherEditors"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "codegpt-sidebar.focus"
+  },
+  {
+    "key": "alt+i alt+8",
+    "command": "workbench.action.chat.openAgent",
+    "when": "config.chat.agent.enabled && !chatSetupDisabled && !chatSetupHidden"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "-workbench.action.chat.openAgent",
+    "when": "config.chat.agent.enabled && !chatSetupDisabled && !chatSetupHidden"
+  },
+  {
+    "key": "shift+alt+8",
+    "command": "codegpt.selectionCodeGPT",
+    "when": "editorHasSelection"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "-codegpt.selectionCodeGPT",
+    "when": "editorHasSelection"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "chatgpt-vscode.conversationView"
+  },
+  {
+    "key": "ctrl+shift+o",
+    "command": "workbench.action.files.openFileFolder",
+    "when": "isMacNative && openFolderWorkspaceSupport"
+  },
+  {
+    "key": "ctrl+o",
+    "command": "-workbench.action.files.openFileFolder",
+    "when": "isMacNative && openFolderWorkspaceSupport"
   }
 ]
