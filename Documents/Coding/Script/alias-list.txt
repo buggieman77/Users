@@ -30,6 +30,9 @@ mysql
 xampp
 => buka xampp control panel
 
+localhost
+=> buka localhost (apache)
+
 chrome
 => buka google chrome
 
@@ -126,6 +129,8 @@ graph
 
 main 
 => checkout ke branch main
+online 
+=> checkout ke branch online
 
 branch [nama branch baru] 
 => branch baru 

@@ -16,8 +16,7 @@ alias chrome='start "" "/c/Program Files/Google/Chrome/Application/chrome.exe"'
      
 alias gpt='explorer "https://chatgpt.com"'
 alias youtube='explorer "https://youtube.com"'
-alias github='explorer "https://github.com"'
-
+alias localhost='explorer "http://localhost/dashboard/"'
 
 alias webpack='bash ~/Documents/Coding/Script/webpack-frame.sh'
 alias project-initial='bash ~/Documents/Coding/Script/new-project-initial-commit.sh'
@@ -46,6 +45,7 @@ alias check-branch='git branch -vv'
 alias branch='git checkout -b'
 alias new-branch='git checkout --orphan'
 alias main='git checkout main'
+alias online='git checkout online'
 alias checkout='git checkout'
 
 alias log='git log'
