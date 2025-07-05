@@ -10,6 +10,7 @@ alias snippet='cd ~/Users/erensa/AppData/Roaming/Code/User/snippets'
 alias htdocs='explorer.exe "$(cygpath -w /c/xampp/htdocs)"'
 
 alias mysql='mysql -u root -p'
+alias php-mysql='bash ~/Documents/Coding/Script/php-mysql-database.sh'
 
 alias xampp='start "" "/c/xampp/xampp-control.exe"'
 alias chrome='start "" "/c/Program Files/Google/Chrome/Application/chrome.exe"'

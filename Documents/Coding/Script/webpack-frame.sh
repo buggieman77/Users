@@ -25,7 +25,7 @@ cat <<'EOL' > "$PROJECT_NAME/config/webpack.common.js"
 /* ============================
    COMMON WEBPACK CONFIG
    ============================ */
-
+   
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
 export default {

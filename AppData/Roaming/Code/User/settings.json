@@ -102,5 +102,6 @@
   },
   "terminal.integrated.fontSize": 13,
   "genieai.enableConversationHistory": true,
-  "bitoAI.appearance.fontSize (Match with IDE Font)": false
+  "bitoAI.appearance.fontSize (Match with IDE Font)": false,
+  "git.openRepositoryInParentFolders": "never"
 }
