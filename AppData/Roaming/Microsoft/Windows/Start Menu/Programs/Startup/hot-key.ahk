@@ -12,11 +12,12 @@
 ;}
 
 ; Shortcut lain
-#f::Run("explorer.exe")
+
 #q::Send("!{F4}")
 
 
-#c:: {
+#c::
+{
     cmdPath := A_ComSpec
     bashPath := "C:\Program Files\Git\git-bash.exe"
     workingDir := "C:\Users\erensa"
@@ -28,4 +29,14 @@
 ; dan munculkan tray icon
 Loop {
     Sleep(1000)
+}
+
+#f::
+{
+  for hwnd in WinGetList() {
+    style := WinGetStyle(hwnd)
+    if (style & 0x20000000) {
+      try WinRestore(hwnd)
+    }
+  }
 }
