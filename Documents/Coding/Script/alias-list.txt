@@ -27,6 +27,15 @@ htdocs
 mysql
 => buka terminal mysql.exe
 
+php-mysql
+=> frame mysql database
+
+test-script
+=> run new script
+
+new-script
+=> open test.script file
+
 xampp
 => buka xampp control panel
 
