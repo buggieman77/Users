@@ -168,7 +168,7 @@ function read(int|string \$id, mysqli|false \$database, string \$tableName): arr
    mysqli_close(\$database);
    // jika tidak ada data di dalam table databasenya lempar error
    if (empty(\$data)){
-      throw new Exception("data no found");
+      throw new mysqli_sql_exception("data not found");
    }
    return \$data;
 }
