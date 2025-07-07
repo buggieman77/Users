@@ -3,17 +3,17 @@ alias file='touch'
 alias folder='mkdir'
 alias Latihan='cd ~/Documents/Coding/Latihan'
 
-alias Project='cd ~/Documents/Coding/Project'
-alias Tutorial='cd ~/Documents/Coding/Tutorial'
+alias project-dir='cd ~/Documents/Coding/Project'
+alias tutorial-dir='cd ~/Documents/Coding/Tutorial'
 
-alias Script='explorer.exe "$(cygpath -w ~/Documents/Coding/Script)"'
-alias Script-dir='cd ~/Documents/Coding/Script'
+alias script-dir='cd ~/Documents/Coding/Script'
+alias script='explorer.exe "$(cygpath -w ~/Documents/Coding/Script)"'
 alias test-script='bash ~/Documents/Coding/Script/test-script.sh'
 alias new-script='code ~/Documents/Coding/Script/test-script.sh'
 
 alias snippet='cd ~/Users/erensa/AppData/Roaming/Code/User/snippets'
-alias htdocs='explorer.exe "$(cygpath -w /c/xampp/htdocs)"'
 alias htdocs-dir='cd /c/xampp/htdocs'
+alias htdocs='explorer.exe "$(cygpath -w /c/xampp/htdocs)"'
 
 alias mysql='mysql -u root -p'
 alias php-mysql='bash ~/Documents/Coding/Script/php-mysql-database.sh'
