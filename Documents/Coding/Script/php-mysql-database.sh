@@ -64,9 +64,9 @@ cat <<EOL >> "index.html"
 </form>
 EOL
 
-echo "[✓] button $DATANAME Manager dimasukan kedalam index.html [✓]"
+echo "[✓] button $DATANAME Manager di masukan ke dalam index.html [✓]"
 
-# =========== .httaccess ===========
+# =========== .htaccess ===========
 cat <<EOL >> ".htaccess"
 RewriteEngine On
 RewriteBase $RELATIVE_PATH
@@ -79,13 +79,13 @@ RewriteRule ^$DATANAME-database/?$ $DATANAME [R=302,L]
 
 RewriteRule ^add-new-$DATANAME/?$ $DATANAME-database/create-data.php [L]
 RewriteRule ^$DATANAME/?$ $DATANAME-database/read-data.php [L]
-RewriteRule ^update-$DATANAME/?$ $DATANAME-database/update-data.php [L]
-RewriteRule ^delete-$DATANAME/?$ $DATANAME-database/delete-data.php [L]
+RewriteRule ^update-[^/]+/?$ $DATANAME-database/update-data.php [L]
+RewriteRule ^delete-[^/]+/?$ $DATANAME-database/delete-data.php [L]
 
 # ========= AKSES LANGSUNG FILE PHP DI $DATANAME-database/ REDIRECT KE ENTRY POINT =========
 
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s.*$DATANAME-database/[^/]+\.php\s [NC]  
-RewriteRule ^$DATANAME-database/[^/]+\.php$ /tutorial/pertemuan12/$DATANAME [R=302,L]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s.*?/$DATANAME-database/ [NC]
+RewriteRule ^$DATANAME-database/.*$ $RELATIVE_PATH$DATANAME [R=302,L]
 EOL
 
 echo "[✓] file .htaccess [✓]"
@@ -98,6 +98,7 @@ cat <<EOL > "$DATANAME-database/mysql-function.php"
 <?php
 
 \$dataName = "$DATANAME";
+\$capitalDataName = ucfirst(\$dataName) ;
 \$entryPoint = "$RELATIVE_PATH".\$dataName ; 
 
 function mysql(
@@ -158,7 +159,7 @@ function read(int|string \$id, mysqli|false \$database, string \$tableName): arr
    // Jika id bukan angka ambil semua data di dalam table database
    \$query = is_numeric(\$id) ? "SELECT * FROM \$tableName WHERE id = \$id" : "SELECT * FROM \$tableName";
    \$data = [];
-   // Eksekusi query dan simpan yang dikembalikan kedalam variable result
+   // Eksekusi query dan simpan yang dikembalikan ke dalam variable result
    \$result = mysqli_query(\$database, \$query);
    // Fetching jadi array assosiatif
    while(\$row = mysqli_fetch_assoc(\$result)){
@@ -185,9 +186,9 @@ function update(array \$newData, mysqli|false \$database, string \$tableName): s
    unset(\$newData["id"]);
    // masukan value ke dalam array values 
    \$values = array_values(\$newData);
-   // tambahkan id kedalam array values
+   // tambahkan id ke dalam array values
    \$values[] = \$id;
-   // set tipe data semua value (assumsi semua string kecuali id)
+   // set tipe data semua value (asumsi semua string kecuali id)
    \$types = str_repeat("s", count(\$values) - 1) . "i";
    //buat array untuk placeholder
    \$placeholdersArray = array_map(fn(\$field) => "\`\$field\` = ?", array_keys(\$newData));
@@ -198,7 +199,7 @@ function update(array \$newData, mysqli|false \$database, string \$tableName): s
    // siapkan statement
    \$statement = mysqli_prepare(\$database,\$query);
 
-   // kaitkan semua value kedalam statement
+   // kaitkan semua value ke dalam statement
    mysqli_stmt_bind_param(\$statement, \$types, ...\$values);
    // jalankan statement
    mysqli_stmt_execute(\$statement);
@@ -279,7 +280,7 @@ function check_crud_access(string \$expectedAction, string \$method = "post") {
       !isset(\$input["action"]) ||
       \$input["action"] !== \$expectedAction
    ) {
-      // Redirect (302,dev) ke entry point jika gapunya akses
+      // Redirect (302,dev) ke entry point jika ga punya akses
       header("Location: ".\$GLOBALS["entryPoint"],false,302);
       exit;
    } 
@@ -309,7 +310,7 @@ cat <<EOL > "$DATANAME-database/create-data.php"
 <?php 
 require "./mysql-function.php";  
 
-// Cek akses masuk kehalaman ini
+// Cek akses masuk ke halaman ini
 check_crud_access("create");  
 // Jika form disubmit (tombol Create ditekan)
 if (isset(\$_POST["submit"])) {  
@@ -359,8 +360,6 @@ require "./mysql-function.php";
 
 // Ambil seluruh data $DATANAME dari database dan simpan ke array \$${DATANAME}s
 \$${DATANAME}s = mysql_crud("read","all");
-// tampilan konfirmasi updated dan delete data
-showConfirm();
 
 ?>
 
@@ -369,12 +368,12 @@ showConfirm();
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>$DATANAME Data Manager</title>
+   <title><?= \$capitalDataName ?> Data Manager</title>
 </head>
 <body>
    <form action="add-new-<?= \$dataName ?>" method="post"> 
       <input type="hidden" name="action" value="create">
-      <button type="submit">Add New $DATANAME</button>
+      <button type="submit">Add New <?= \$capitalDataName ?></button>
    </form>
    <br><hr><br>
    <?php foreach (\$${DATANAME}s as \$index => \$$DATANAME) : ?>

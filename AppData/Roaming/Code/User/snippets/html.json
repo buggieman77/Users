@@ -57,7 +57,7 @@
       ],
       "description": "CREATE MYSQL DATABASE BUTTON"
    },
-   "CREATE FORM SKLETON": {
+   "CREATE FORM SKELETON": {
       "prefix": "mysql",
       "body": [
          "<form method=\"post\" >",
@@ -96,7 +96,7 @@
       ],
       "description": "CREATE MYSQL DATABASE BUTTON"
    },
-   "UPDATE FORM SKLETON": {
+   "UPDATE FORM SKELETON": {
       "prefix": "mysql",
       "body": [
          "<form method=\"post\" >",
