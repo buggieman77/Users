@@ -180,6 +180,7 @@
     "rtrim",
     "session_destroy",
     "session_start",
+    "ssib",
     "strlen",
     "strtolower",
     "strtotime",
