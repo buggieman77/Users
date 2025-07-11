@@ -216,5 +216,6 @@
     "c": true,
     "cpp": true
   },
-  "cSpell.checkOnlyEnabledFileTypes": true
+  "cSpell.checkOnlyEnabledFileTypes": true,
+  "window.menuBarVisibility": "toggle"
 }
