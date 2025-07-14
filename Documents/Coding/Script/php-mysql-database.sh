@@ -23,9 +23,19 @@ while true; do
     fi
 done
 
+# Input primary key table name
+while true; do
+    read -p "Masukkan primary key dari tabel database: " PRIMARYKEY
+    if [[ -n "$PRIMARYKEY" ]]; then
+        break
+    else
+        echo "❌ Nama primary key tidak boleh kosong. ❌"
+    fi
+done
+
 # Input field/kolom table name
 while true; do
-    read -p "Masukkan 1 nama field dari tabel database: " FIELD
+    read -p "Masukkan 1 nama field (primary field) dari tabel database: " FIELD
     if [[ -n "$FIELD" ]]; then
         break
     else
@@ -59,7 +69,7 @@ cat <<EOL >> "index.html"
 
 
 <form action="$DATANAME" method="post">
-   <input type="hidden" name="action" value="read">
+   <input type="hidden" name="access" value="entry-point" />
    <button type="submit" name="submit">$DATANAME Manager</button>
 </form>
 EOL
@@ -73,376 +83,139 @@ RewriteBase $RELATIVE_PATH
 
 # ======================== ENTRY POINT ========================
 
-RewriteRule ^$DATANAME-database/?$ $DATANAME [R=302,L]
+RewriteRule ^$DATANAME/?$ $DATANAME-database/pages/read-page.php [L]
 
 # ======================== ALIAS KE FILE ========================
 
-RewriteRule ^add-new-$DATANAME/?$ $DATANAME-database/create-data.php [L]
-RewriteRule ^$DATANAME/?$ $DATANAME-database/read-data.php [L]
-RewriteRule ^update-[^/]+/?$ $DATANAME-database/update-data.php [L]
-RewriteRule ^delete-[^/]+/?$ $DATANAME-database/delete-data.php [L]
+RewriteRule ^add-new-$DATANAME/?$ $DATANAME-database/pages/create-page.php [L]
+RewriteRule ^update-[^/]+/?$ $DATANAME-database/pages/update-page.php [L]
+RewriteRule ^delete-[^/]+/?$ $DATANAME-database/pages/delete-page.php [L]
 
-# ========= AKSES LANGSUNG FILE PHP DI $DATANAME-database/ REDIRECT KE ENTRY POINT =========
+# ======================== CONDITION ========================
 
+# Cek jika request mengandung /$DATANAME-database/
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s.*?/$DATANAME-database/ [NC]
+
+# Redirect ke /tutorial/pertemuan14/$DATANAME
 RewriteRule ^$DATANAME-database/.*$ $RELATIVE_PATH$DATANAME [R=302,L]
 EOL
 
 echo "[✓] file .htaccess [✓]"
 
-mkdir -p "$DATANAME-database" 
-echo "[✓] Folder $DATANAME-database [✓]"
+mkdir -p "$DATANAME-database/pages" 
+echo "[✓] Folder $DATANAME-database/pages [✓]"
 
-# =========== $DATANAME-database/mysql-function.php ===========
-cat <<EOL > "$DATANAME-database/mysql-function.php"
-<?php
-
-\$dataName = "$DATANAME";
-\$capitalDataName = ucfirst(\$dataName) ;
-\$entryPoint = "$RELATIVE_PATH".\$dataName ; 
-
-function mysql(
-   callable \$callback,
-   mixed \$data = null,
-   ?int \$port = null,
-   ?string \$socket = null,
-   string \$databaseName = "$DATANAME",
-   string \$databaseTableName = "$TABLENAME",
-   string \$hostname = "localhost",
-   string \$username = "root",
-   string \$password = "",
-): mixed
-{
-   // Aktifkan mode exception pada MySQLi agar error dilempar sebagai exception
-   mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-   try {
-      // Membuka koneksi ke database dengan parameter yang diberikan
-      \$connection = mysqli_connect(\$hostname, \$username, \$password, \$databaseName, \$port, \$socket);
-      // Menjalankan callback sesuai operasi CRUD yang diminta
-      return \$callback(\$data,\$connection, \$databaseTableName);
-   } catch (mysqli_sql_exception \$error) {
-      // Menangkap error MySQLi dan menampilkan pesan error
-      return showAlert("Error: " . \$error -> getMessage());
-   }  
-}
-
-function create(array \$newData, mysqli|false \$database, string \$tableName):string|int {
-   // Ambil nama-nama kolom dari array newData
-   \$fields = array_keys(\$newData);
-   // Buat placeholder '?' sebanyak jumlah key
-   \$placeholders = implode(", ", array_fill(0, count(\$fields), "?"));
-   // Nama kolom diapit backtick agar aman dari reserved word
-   \$fieldList = implode(", ", array_map(fn(\$field) => "\`\$field\`", \$fields));
-   // Ambil value dari array newData
-   \$values = array_values(\$newData);
-   // Tipe data parameter, di sini diasumsikan semua string ("s"), bisa diubah jika ada tipe lain
-   \$types = str_repeat("s", count(\$fields));
-   // Query SQL dengan prepared statement
-   \$query = "INSERT INTO \$tableName (\$fieldList) VALUES (\$placeholders)";
-   \$statement = mysqli_prepare(\$database, \$query);
-   // Bind parameter ke statement
-   mysqli_stmt_bind_param(\$statement, \$types, ...\$values);
-   // Eksekusi statement
-   mysqli_stmt_execute(\$statement);
-   // Ambil jumlah baris yang terpengaruh
-   \$value = mysqli_stmt_affected_rows(\$statement);
-   // Tutup statement
-   mysqli_stmt_close(\$statement);
-   // Tutup koneksi
-   mysqli_close(\$database);
-
-   return \$value;
-}
-
-function read(int|string \$id, mysqli|false \$database, string \$tableName): array {
-   // Jika id bukan angka ambil semua data di dalam table database
-   \$query = is_numeric(\$id) ? "SELECT * FROM \$tableName WHERE id = \$id" : "SELECT * FROM \$tableName";
-   \$data = [];
-   // Eksekusi query dan simpan yang dikembalikan ke dalam variable result
-   \$result = mysqli_query(\$database, \$query);
-   // Fetching jadi array assosiatif
-   while(\$row = mysqli_fetch_assoc(\$result)){
-      \$data[] = \$row;
-   }
-   // Tutup koneksi
-   mysqli_close(\$database);
-   // jika tidak ada data di dalam table databasenya lempar error
-   if (empty(\$data)){
-      throw new mysqli_sql_exception("data not found");
-   }
-   return \$data;
-}
-
-function update(array \$newData, mysqli|false \$database, string \$tableName): string|int {
-   // check apakah id ada di array, dan berupa angka 
-   if (!isset(\$newData["id"]) || !is_numeric(\$newData["id"])){
-   throw new mysqli_sql_exception ("Access denied");
-   }
-
-   // simpan nilai id sebagai integer
-   \$id = (int) \$newData["id"];
-   // hapus id dari array
-   unset(\$newData["id"]);
-   // masukan value ke dalam array values 
-   \$values = array_values(\$newData);
-   // tambahkan id ke dalam array values
-   \$values[] = \$id;
-   // set tipe data semua value (asumsi semua string kecuali id)
-   \$types = str_repeat("s", count(\$values) - 1) . "i";
-   //buat array untuk placeholder
-   \$placeholdersArray = array_map(fn(\$field) => "\`\$field\` = ?", array_keys(\$newData));
-   // ubah jadi string
-   \$placeholders = implode(", ",\$placeholdersArray);
-   // siapkan query
-   \$query = "UPDATE \$tableName SET \$placeholders WHERE id = ?";
-   // siapkan statement
-   \$statement = mysqli_prepare(\$database,\$query);
-
-   // kaitkan semua value ke dalam statement
-   mysqli_stmt_bind_param(\$statement, \$types, ...\$values);
-   // jalankan statement
-   mysqli_stmt_execute(\$statement);
-   // simpan jumlah baris yang berubah
-   \$value = mysqli_stmt_affected_rows(\$statement);
-   // tutup statement
-   mysqli_stmt_close(\$statement);
-   // tutup tutup koneksi
-   mysqli_close(\$database);
-
-   // kembalikan nilai
-   return \$value;
-}
-
-function delete(string|int \$id, mysqli|false \$database, string \$tableName): string|int {
-   // lempar error kalo id bukan angka
-   if (!is_numeric(\$id)) {
-      throw new mysqli_sql_exception ("Access denied");
-   }
-   // Query SQL dengan prepared statement
-   \$query = "DELETE FROM \$tableName WHERE id = ?";
-   // Siapkan statement
-   \$statement = mysqli_prepare(\$database, \$query);
-   // Bind parameter id
-   mysqli_stmt_bind_param(\$statement, "i", \$id);
-   // Eksekusi statement
-   mysqli_stmt_execute(\$statement);
-   // Ambil jumlah baris yang terpengaruh
-   \$value = mysqli_stmt_affected_rows(\$statement);
-   // Tutup statement
-   mysqli_stmt_close(\$statement);
-   // Tutup koneksi
-   mysqli_close(\$database);
-
-   return \$value;
-}
-
-function showAlert(string \$message): void {
-   // tampilkan alert javascript
-   echo "
-      <script>
-         alert(" . json_encode(\$message) . ");
-         // Redirect ke entry point (read-data.php)
-         document.location.href = " . json_encode(\$GLOBALS["entryPoint"]) . ";
-      </script>
-   ";
-   exit; 
-}
-
-function showConfirm(): void {
-   echo "
-      <script>
-      function htmlDecode(input) {
-         let e = document.createElement('textarea');
-         e.innerHTML = input;
-         return e.value;
-      }
-
-      function showConfirm(action, data) {
-         let dataName = htmlDecode(JSON.parse(data));
-         let message = (action == 'delete') 
-                        ? 'want to delete ' + dataName + ' ?' 
-                        : 'want to edit ' + dataName + ' ?'
-         return confirm(message)
-      }
-      </script>
-   ";
-}
-
-function check_crud_access(string \$expectedAction, string \$method = "post") {
-   // konversi k lowercase
-   \$method = strtolower(\$method);
-   // ambil method sesuai data yang dikirim
-   \$input = \$method === "get" ? \$_GET : \$_POST;
-   // cek punya akses yang di dapat dari tekan tombol akses
-   if (
-      \$_SERVER["REQUEST_METHOD"] !== strtoupper(\$method) ||
-      !isset(\$input["action"]) ||
-      \$input["action"] !== \$expectedAction
-   ) {
-      // Redirect (302,dev) ke entry point jika ga punya akses
-      header("Location: ".\$GLOBALS["entryPoint"],false,302);
-      exit;
-   } 
-}
-
-function mysql_crud(string \$action,mixed \$data,?string \$successInfo = null,?string \$failedInfo = null) {
-   if (\$action == "read"){
-      return mysql(\$action,\$data);
-   }
-   // Jika proses crud berhasil
-   if ( mysql(\$action, \$data) > 0 ) {
-   // Tampilkan alert sukses
-   showAlert(\$successInfo); 
-   } else {
-   // Tampilkan alert gagal
-   showAlert(\$failedInfo);
-   }
-}
-
-?>
-EOL
-
-echo "[✓] file $DATANAME-database/mysql-function.php [✓]"
-
-# =========== $DATANAME-database/create-data.php ===========
-cat <<EOL > "$DATANAME-database/create-data.php"
+# =========== $DATANAME-database/pages/create-page.php ===========
+cat <<EOL > "$DATANAME-database/pages/create-page.php"
 <?php 
-require "./mysql-function.php";  
-
-// Cek akses masuk ke halaman ini
-check_crud_access("create");  
-// Jika form disubmit (tombol Create ditekan)
-if (isset(\$_POST["submit"])) {  
-   // Ambil data dari form, lakukan sanitasi dengan htmlspecialchars untuk mencegah XSS
-   \$new$DATANAME = [
-      "$FIELD" => htmlspecialchars(\$_POST["$FIELD"]),
-   ];
-   // Isi dari alert sukses
-   \$success = "$DATANAME : ".html_entity_decode(\$new$DATANAME["$FIELD"])." successfully added !";
-   // Isi dari alert gagal
-   \$failed = "$DATANAME : ".html_entity_decode(\$new$DATANAME["$FIELD"])."  failed to be added !";
-
-   // Jalankan function mysql callback create
-   mysql_crud("create",\$new$DATANAME,\$success,\$failed);
-
-}
-
+require __DIR__ . "/../script/mysql-database.php"; 
+checkFormAccess(CREATE_ACCESS, "post");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Add New $DATANAME </title>
+   <title>Add New <?= DISPLAY_DB_NAME ?></title>
 </head>
 <body>
-   <form method="post" >
-      <input type="hidden" name="action" value="create">
+   <form method="post">
+      <input type="hidden" name="access" value="<?= CREATE_ACCESS ?>"/>
 
-      <label for="$FIELD">$FIELD :</label>
-      <input type="text" id="$FIELD" placeholder="$FIELD" name="$FIELD" required>
+      <?php foreach(VISIBLE_FIELD as \$field) : ?>
 
-      <button type="submit" name="submit">Create</button>
+      <label for="<?= \$field ?>"><?= \$field ?> :</label>
+      <input type="text" id="<?= \$field ?>" placeholder="<?= \$field ?>" name="<?= \$field ?>" value="<?= htmlspecialchars(trim(\$_POST[\$field] ?? null)) ?>" required>
+      
+      <?php endforeach ?>
+
+      <button class="button" type="submit" name="submit">Create</button>
    </form>
+<?php 
+if(IS_SUBMIT) {
+   \$result = runSqlCommand("insert", ...VISIBLE_FIELD);
+   \$success = "✅ " . \$_POST[PRIMARY_FIELD] . " has been created ✅";
+   \$failed = "❌ failed to create " . \$_POST[PRIMARY_FIELD] . " ❌";
+   if (\$result > 0) {
+      header("Location: " . ENTRY_POINT, true, 302);
+      exit;
+   }
+} 
+?>
 </body>
 </html>
 EOL
 
-echo "[✓] file $DATANAME-database/create-data.php [✓]"
+echo "[✓] file $DATANAME-database/pages/create-page.php [✓]"
 
-# =========== $DATANAME-database/read-data.php ===========
-cat <<EOL > "$DATANAME-database/read-data.php"
-<?php
-
-require "./mysql-function.php";
-
-// Ambil seluruh data $DATANAME dari database dan simpan ke array \$${DATANAME}s
-\$${DATANAME}s = mysql_crud("read","all");
-
+# =========== $DATANAME-database/pages/read-page.php ===========
+cat <<EOL > "$DATANAME-database/pages/read-page.php"
+<?php 
+require __DIR__ . "/../script/mysql-database.php";
+\$${DATANAME}s = runSqlCommand("select", "all");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title><?= \$capitalDataName ?> Data Manager</title>
+   <title><?= DISPLAY_DB_NAME ?> Data Manager</title>
 </head>
 <body>
-   <form action="add-new-<?= \$dataName ?>" method="post"> 
-      <input type="hidden" name="action" value="create">
-      <button type="submit">Add New <?= \$capitalDataName ?></button>
+   <form action="add-new-<?= LOWER_DISPLAY_DB_NAME ?>" method="post"> 
+      <input type="hidden" name="access" value="<?= CREATE_ACCESS ?>" />
+      <button type="submit">Add New <?= DISPLAY_DB_NAME ?></button>
    </form>
    <br><hr><br>
+
    <?php foreach (\$${DATANAME}s as \$index => \$$DATANAME) : ?>
    <?php ++\$index ?>
+
    <section>
-      <h3><?= \$index.". $FIELD : ".\$$DATANAME["$FIELD"] ?></h3>
+      <?php foreach(VISIBLE_FIELD as \$field) : ?>
+      <h3><?= \$index . ". " . \$field . " : " . \$$DATANAME[\$field] ?></h3>
+      <?php endforeach ?>
    </section>
+   
    <br>
-   <form
-   action = "update-<?= \$dataName ?>"
-   method = "post"
-   data-action = "update"
-   data-name = "<?= htmlspecialchars(json_encode(\$$DATANAME["$FIELD"]), ENT_QUOTES, "UTF-8") ?>"
-   onsubmit = "return showConfirm(this.dataset.action, this.dataset.name)"
-   >
-      <input type="hidden" name="id" value="<?= \$$DATANAME["id"] ?>">
-      <input type="hidden" name="action" value="update">
-      <button type="submit">EDIT</button>
+   <form action="update-<?= \$$DATANAME[PRIMARY_FIELD]?>" method="post">
+      <input type="hidden" name="access" value="<?= UPDATE_ACCESS ?>" />
+      <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_KEY] ?>">
+      <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
+      <button type="submit" name="confirm">EDIT</button>
    </form>
    <br>
-   <form
-   action = "delete-<?= \$dataName ?>"
-   method = "post"
-   data-action = "delete"
-   data-name = "<?= htmlspecialchars(json_encode(\$$DATANAME["$FIELD"]), ENT_QUOTES, "UTF-8") ?>"
-   onsubmit = "return showConfirm(this.dataset.action, this.dataset.name)"
-   >
-      <input type="hidden" name="id" value="<?= \$$DATANAME["id"] ?>">
-      <input type="hidden" name="$FIELD" value="<?= (\$$DATANAME["$FIELD"]) ?>">
-      <input type="hidden" name="action" value="delete">
-      <button type="submit">DELETE</button>
+
+   <form action="delete-<?= \$$DATANAME[PRIMARY_FIELD] ?>" method="post">
+      <input type="hidden" name="access" value="<?= DELETE_ACCESS ?>" />
+      <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_KEY] ?>">
+      <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
+      <button type="submit" name="confirm" value="delete">DELETE</button>
    </form>
    <br>
+   
    <?php endforeach ?>
+<?php
+\$isDelete = isset(\$_POST["confirm"]) && \$_POST["confirm"] === "delete";
+
+if (\$isDelete){
+   \$delete = "⚠ Want to delete " . \$_POST[PRIMARY_FIELD] . " ?";
+   \$edit = "📝 Want to edit " . \$_POST[PRIMARY_FIELD] . " ?";
+   echo \$delete;
+} 
+?>
 </body>
 </html>
-
 EOL
 
-echo "[✓] file $DATANAME-database/read-data.php [✓]"
+echo "[✓] file $DATANAME-database/pages/read-page.php [✓]"
 
-# =========== $DATANAME-database/update-data.php ===========
-cat <<EOL > "$DATANAME-database/update-data.php"
-<?php
-
-require "./mysql-function.php";
-
-// Cek akses masuk kehalaman ini
-check_crud_access("update");
-
-// Masukan seluruh data $DATANAME yang dipilih dari id ke array $DATANAME
-\$$DATANAME = mysql_crud("read",\$_POST["id"])[0];
-
-// Jika form disubmit (tombol update ditekan)
-if (isset(\$_POST["submit"])) {
-   // Ambil data dari form, lakukan sanitasi dengan htmlspecialchars untuk mencegah XSS
-   \$edited$DATANAME = [
-      // Masukan Id untuk dikirim ke fungsi msql update (nebeng parameter)
-      "id" => \$_POST["id"],
-      "$FIELD" => htmlspecialchars(\$_POST["$FIELD"]),
-   ];
-   // Isi dari alert sukses
-   \$success = "Update $DATANAME : ".html_entity_decode(\$edited$DATANAME["$FIELD"])." success !";
-   // Isi dari alert gagal
-   \$failed = "$DATANAME : ".html_entity_decode(\$edited$DATANAME["$FIELD"])."  failed to be update !";
-
-   mysql_crud("update",\$edited$DATANAME,\$success,\$failed);
-}
-
+# =========== $DATANAME-database/pages/update-pages.php ===========
+cat <<EOL > "$DATANAME-database/pages/update-page.php"
+<?php 
+require __DIR__ . "/../script/mysql-database.php";
+checkFormAccess(UPDATE_ACCESS, "post");
+\$$DATANAME = runSqlCommand("select", PRIMARY_KEY)[0];
 ?>
 
 <!DOCTYPE html>
@@ -450,58 +223,410 @@ if (isset(\$_POST["submit"])) {
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Updated $DATANAME</title>
+   <title>Updated <?= \$_POST[PRIMARY_FIELD] ?></title>
 </head>
 <body>
-   <form method="post" >
-      <input type="hidden" name="id" value="<?= \$_POST["id"] ?>" >
-      <input type="hidden" name="action" value="update">
+   <form method="post">
+      <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$_POST[PRIMARY_KEY] ?>" >
+      <input type="hidden" name="access" value="<?= UPDATE_ACCESS ?>" />
 
-      <label for="$FIELD">$FIELD :</label>
-      <input type="text" id="$FIELD" placeholder="$FIELD" name="$FIELD" value="<?= \$$DATANAME["$FIELD"] ?>" required>
-   
+      <?php foreach(VISIBLE_FIELD as \$field) : ?>
+
+      <label for="<?= \$field ?>"><?= \$field ?> :</label>
+      <input type="text" id="<?= \$field ?>" placeholder="<?= \$field ?>" name="<?= \$field ?>" value="<?= htmlspecialchars(trim(\$_POST[\$field] ?? \$$DATANAME[\$field] ?? null)) ?>" required>
+      
+      <?php endforeach ?>
+
       <button type="submit" name="submit">Update</button>
    </form>
+<?php
+if(IS_SUBMIT){
+   \$success = "✅ " . \$_POST[PRIMARY_FIELD] . " has been updated ✅";
+   \$failed = "❌ failed to update " . \$_POST[PRIMARY_FIELD] . " ❌";
+
+   \$result = runSqlCommand("update", PRIMARY_KEY, ...VISIBLE_FIELD);
+
+   if (\$result  > 0) {
+      header("Location: " . ENTRY_POINT, true, 302);
+      exit;
+   }
+}
+?> 
 </body>
 </html>
 EOL
 
-echo "[✓] file $DATANAME-database/update-data.php [✓]"
+echo "[✓] file $DATANAME-database/pages/update-page.php [✓]"
 
-# =========== $DATANAME-database/delete-data.php ===========
-cat <<EOL > "$DATANAME-database/delete-data.php"
-<?php
+# =========== $DATANAME-database/pages/delete-page.php ===========
+cat <<EOL > "$DATANAME-database/pages/delete-page.php"
+<?php require __DIR__ . "/../script/mysql-database.php";
+checkFormAccess(DELETE_ACCESS, "post");
+\$success = "✅ " . \$_POST[PRIMARY_FIELD] . " has been deleted ✅";
+\$failed  = "❌ failed to delete " . \$_POST[PRIMARY_FIELD] . " ❌";
 
-require "./mysql-function.php";
-
-// Cek akses masuk kehalaman ini
-check_crud_access("delete");
-// Ambil nama action dari parameter POST untuk callback
-\$action = \$_POST["action"];
-// Ambil $DATANAME dari parameter POST untuk pesan notifikasi
-\$$DATANAME = \$_POST["$FIELD"];
-// Ambil id $DATANAME dari parameter POST untuk cari target yang mau dihapus
-\$id = \$_POST["id"];
-// Isi dari alert sukses
-\$succes = \$$DATANAME." has been deleted !";
-// Isi dari alert gagal
-\$failed = \$$DATANAME." failed to delete !";
-
-//Jalankan function mysql callback create
-mysql_crud(\$action,\$id,\$succes,\$failed);
-
+\$result = runSqlCommand("delete", PRIMARY_KEY);
+if (\$result > 0) {
+   header("Location: " . ENTRY_POINT, true, 302);
+   exit;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Delete $DATANAME</title>
+   <title>Delete <?= \$_POST[PRIMARY_FIELD] ?></title>
 </head>
+<body>
+</body>
 </html>
 EOL
 
-echo "[✓] file $DATANAME-database/delete-data.php [✓]"
+echo "[✓] file $DATANAME-database/pages/delete-page.php [✓]"
+
+mkdir -p "$DATANAME-database/script" 
+echo "[✓] Folder $DATANAME-database/script [✓]"
+
+# =========== $DATANAME-database/script/mysql-database.php  ===========
+cat <<EOL > "$DATANAME-database/script/mysql-database.php"
+<?php
+declare(strict_types=1);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+require __DIR__ . "/helper/utils.php";
+
+function checkFormAccess(string \$access, string \$method = "post"): void
+{
+   // adjust input data with  method request params
+   \$isGetMethod = (strtolower(\$method) == "get");
+   \$input = \$isGetMethod ? \$_GET : \$_POST;
+
+   // @flag (invalid access, invalid method)
+   \$invalidAccess= (!isset(\$input["access"]) || ((\$input["access"] ?? null) !== \$access));
+   \$invalidMethod = (\$_SERVER["REQUEST_METHOD"] !== strtoupper(\$method));
+ 
+   if (\$invalidMethod || \$invalidAccess) {
+      // redirect to entry point
+      header("Location: ".ENTRY_POINT, true, 302);
+      exit;
+   }
+}
+
+function runSqlCommand(string \$keyword, mixed ...\$fieldList): array | int 
+{
+   try {
+      // @params (string sqlString, array values, string types, bool hasBindParams, bool isSelectCommand)
+      extract(buildSqlComponent(\$keyword, \$fieldList));
+      // @params (mysqli connection, mysqli_stmt statement)
+      extract(prepareStatement(\$sqlString, \$types, \$values, \$hasBindParams));
+
+      // @return (fetch assoc array) or @return (total affected row)
+      \$result = \$isSelectCommand ? executeAndFetch(\$statement) : executeBoundStatement(\$statement);
+      // close statement and connection
+      closeDatabaseResource(\$connection, \$statement);
+   } catch (Throwable \$error) {  
+      exceptionHandler(\$error);
+   }
+   return \$result;
+}
+
+function buildSqlComponent(string \$keyword, array \$fieldList): array 
+{
+   // @params (string command, array fields)
+   extract(normalizeParam(\$keyword, \$fieldList));
+
+   // @return (bool isSelectCommand, bool hasBindParams) and @flag (bool hasPrimaryKey)
+   extract(setSqlFlag(\$command, \$fields));
+
+   // @params (array sortedField, array escapedField) only escape field not primary key
+   extract(fieldsHandler(\$fields, \$hasPrimaryKey));
+   
+   // @return (array value, string types)
+   extract(getInputData(\$sortedField));
+
+   // @return sql string template
+   \$sqlString = createSqlString(\$command, \$escapedField, \$hasBindParams);
+
+   return [
+      "sqlString" => \$sqlString,
+      "values" => \$values, 
+      "types" => \$types, 
+      "hasBindParams" => \$hasBindParams,
+      "isSelectCommand" => \$isSelectCommand,
+   ];
+}
+
+function prepareStatement(string \$sqlString, string \$types, array \$values, bool \$hasBindParams) : array 
+{
+   // set exception thrower identifier
+   \$identifier = "\n[ ".__FUNCTION__." ]";
+
+   // @return (mysqli connection)
+   \$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT, DB_SOCKET);
+   if (!\$conn) throw new mysqli_sql_exception("Connection failed : ".mysqli_connect_error().\$identifier);
+
+   // @return (mysqli_statement statement)
+   \$stmt = mysqli_prepare(\$conn, \$sqlString);
+   if (!\$stmt) throw new mysqli_sql_exception("Prepare failed : ".mysqli_error(\$conn).\$identifier);
+
+   // only bind to hasBindParams flag
+   if (\$hasBindParams && !mysqli_stmt_bind_param(\$stmt, \$types, ...\$values)) 
+   throw new mysqli_sql_exception("failed to bind : ".mysqli_stmt_error(\$stmt).\$identifier);
+
+   return ["connection" => \$conn, "statement" => \$stmt];
+}
+
+function executeBoundStatement(mysqli_stmt \$statement): int 
+{
+   // set exception thrower identifier
+   \$identifier = "\n[ ".__FUNCTION__." ]";
+
+   // execute bound statement
+   if (!mysqli_stmt_execute(\$statement)) 
+   throw new mysqli_sql_exception("Failed to executed : ".mysqli_stmt_error(\$statement).\$identifier);
+
+   return mysqli_stmt_affected_rows(\$statement);
+}
+
+function executeAndFetch(mysqli_stmt \$statement): array 
+{
+   // set exception thrower identifier
+   \$identifier = "\n[ ".__FUNCTION__." ]";
+
+   // execute prepared statement without bind params
+   if (!mysqli_stmt_execute(\$statement)) 
+   throw new mysqli_sql_exception("Failed to execute : ".mysqli_stmt_error(\$statement).\$identifier);
+   
+   // @return fetch data result to array
+   \$data =  mysqli_stmt_get_result(\$statement);
+   \$result = [];
+   
+   while (\$row = mysqli_fetch_assoc(\$data)) {
+      \$result[] = \$row;
+   }
+
+   if (empty(\$result)) 
+   throw new mysqli_sql_exception("Data is empty".\$identifier);
+
+   return \$result;
+}
+
+function closeDatabaseResource(mysqli \$connection, mysqli_stmt \$statement): true 
+{
+   // set exception thrower identifier
+   \$identifier = "\n[ ".__FUNCTION__." ]";
+
+   // close prepared statement
+   if (!mysqli_stmt_close(\$statement))
+   throw new mysqli_sql_exception("Failed to close statement\n".mysqli_stmt_error(\$statement).\$identifier);
+
+   // close connection with database
+   if (!mysqli_close(\$connection))
+   throw new mysqli_sql_exception("Failed to close connection\n".mysqli_error(\$connection).\$identifier);
+
+   return true;
+}
+EOL
+
+echo "[✓] file $DATANAME-database/script/mysql-database.php [✓]"
+
+mkdir -p "$DATANAME-database/script/helper" 
+echo "[✓] Folder $DATANAME-database/script/helper [✓]"
+
+# =========== $DATANAME-database/script/helper/global-variable.php ===========
+cat <<EOL > "$DATANAME-database/script/helper/global-variable.php"
+<?php
+
+define("DB_HOST", "localhost");
+define("DB_USER", "root");
+define("DB_PASS", "");
+define("DB_NAME", "$DATANAME");
+define("DB_TABLE_NAME", "$TABLENAME");
+define("DB_PORT", null);
+define("DB_SOCKET", null);
+
+define("PROJECT_ROOT", "$RELATIVE_PATH");
+define("ENTRY_POINT", PROJECT_ROOT . DB_NAME);
+
+define("DISPLAY_DB_NAME", ucfirst(strtolower(DB_NAME)));
+define("LOWER_DISPLAY_DB_NAME", strtolower(DISPLAY_DB_NAME));
+
+define("PRIMARY_FIELD", "$FIELD");
+define("PRIMARY_KEY", "$PRIMARYKEY");
+define("VISIBLE_FIELD", [PRIMARY_FIELD]);
+
+define("CREATE_ACCESS", "create");
+define("DELETE_ACCESS", "delete");
+define("UPDATE_ACCESS", "update");
+
+define("IS_SUBMIT", isset(\$_POST["submit"]));
+EOL
+echo "[✓] file $DATANAME-database/script/helper/global-variable.php [✓]"
+
+# =========== $DATANAME-database/script/helper/utils.php ===========
+cat <<EOL > "$DATANAME-database/script/helper/utils.php"
+<?php
+require __DIR__ . "/global-variable.php" ;
+
+// ================================== build_sql_component utils ==================================
+
+function normalizeParam(string \$keyword, array \$fieldList): array 
+{
+   // @return normalize keyword to lower case
+   \$normalizedKeyword = strtolower(\$keyword);
+
+   // unwrap nested array
+   \$isNestedArray = (is_array(\$fieldList[0]) && count(\$fieldList) === 1);
+   \$flatFieldList = \$isNestedArray ? \$fieldList[0] : \$fieldList;
+
+   // @return normalize fieldList to lower case
+   \$normalize = fn(\$field) => strtolower(\$field);
+   \$normalizedField = array_map(\$normalize, \$flatFieldList);
+
+   return ["command" => \$normalizedKeyword, "fields" => \$normalizedField];
+}
+
+function setSqlFlag(string \$command, array \$fields): array 
+{
+  // @return flag set (select command, has bind parameters, has primary key)
+   \$SelectCommandFlag =  (\$command === "select");
+   \$BindParamsFlag = !(count(\$fields) === 1 && is_string(\$fields[0]) && strtolower(\$fields[0]) === "all");
+   \$includePrimaryKeyFlag = (in_array(PRIMARY_KEY, \$fields));
+
+   return [
+      "isSelectCommand" => \$SelectCommandFlag,
+      "hasBindParams" => \$BindParamsFlag,
+      "hasPrimaryKey" => \$includePrimaryKeyFlag 
+   ];
+}
+
+function fieldsHandler(array \$fields, bool \$hasPrimaryKey): array 
+{
+   // unset primary key from field array
+   \$filter = fn(\$field) => \$field !== PRIMARY_KEY;
+   \$filteredField =  \$hasPrimaryKey ? array_filter(\$fields, \$filter) : \$fields;
+   
+   // @return escape fields from sql reserved word (no escape primary key)
+   \$escapeReserveWord = fn(\$field) => "\`\$field\`";
+   \$escapedReserveWord= array_map(\$escapeReserveWord, \$filteredField);
+
+   // @return move primary key to end
+   \$reorderField = \$hasPrimaryKey ? [...\$filteredField, PRIMARY_KEY] : \$filteredField;
+
+   return ["sortedField" => \$reorderField, "escapedField" => \$escapedReserveWord ];
+}
+
+function getInputData(array \$sortedField): array 
+{
+   // adjust request method
+   \$isGetMethod = \$_SERVER["REQUEST_METHOD"] === strtoupper("get");
+   \$rawInput= \$isGetMethod ? \$_GET : \$_POST;
+
+   // @return sanitize input from request method
+   \$sanitizeInput = fn(\$field) => htmlspecialchars(trim(\$rawInput[\$field] ?? \$field));
+   \$sanitizedInput = array_map(\$sanitizeInput, \$sortedField);
+
+   // @return infer type each input
+   \$inputTypes = inferInputType(\$sanitizedInput);
+
+   return ["values" => \$sanitizedInput, "types" => \$inputTypes];
+}
+
+function inferInputType(array \$sanitizedInput): string 
+{  
+   // @return each input type (i = integer, b = blob, d = double, s = string)
+   \$types = "";
+   foreach(\$sanitizedInput as \$input) {
+      \$isFloat = (str_contains((string)\$input, "."));
+      \$isBlob = (is_resource(\$input) || strlen((string)\$input) > 1000);
+
+      if (is_numeric(\$input)) {
+         \$types .= \$isFloat ? "d" : "i";
+      } elseif (\$isBlob) {
+         \$types .= "b";
+      } elseif (is_array(\$input)) {
+         throw new InvalidArgumentException("input not support to binding\n[ ".__FUNCTION__." ]");
+      } else {
+         \$types .=  "s";
+      }
+   }
+   return \$types;
+}
+
+function createSqlString(string \$command, array \$escapedField, bool \$hasBindParams): string 
+{
+   // @params (string columns, string placeholders, setClause)
+   extract(createPlaceholder(\$escapedField));
+
+   // @return create sql string template according command
+   if (!\$hasBindParams) return "SELECT * FROM ".DB_TABLE_NAME;
+   switch(\$command) {
+      case "insert" :
+         return sprintf("INSERT INTO %s (%s) VALUES (%s)", DB_TABLE_NAME, \$columns, \$placeholders);
+      case "update" :
+         return sprintf("UPDATE \`%s\` SET %s WHERE \`%s\` = ?", DB_TABLE_NAME, \$setClause, PRIMARY_KEY);
+      case "delete" :
+         return sprintf("DELETE FROM \`%s\` WHERE \`%s\` = ?", DB_TABLE_NAME, PRIMARY_KEY);
+      case "select" :
+         return sprintf("SELECT * FROM \`%s\` WHERE \`%s\` = ?", DB_TABLE_NAME, PRIMARY_KEY);
+      default :
+         throw new InvalidArgumentException(\$command." command is not found\n[ ".__FUNCTION__." ]");
+   }
+}
+
+function createPlaceholder(array \$escapedField): array 
+{
+   // @return columns template (escape from sql reserved word)
+   \$columnsPlaceholder = implode(", ", \$escapedField);
+   // @return question mark placeholder for value
+   \$valuePlaceholders = implode(", ", array_fill(0, count(\$escapedField), "?"));
+   // @return clause placeholder for set
+   \$setPlaceholder = implode(", ", array_map(fn(\$field) => "\$field = ?", \$escapedField));
+   
+   return [
+      "columns" => \$columnsPlaceholder,
+      "placeholders" => \$valuePlaceholders,
+      "setClause" => \$setPlaceholder
+   ];
+}
+
+// ================================== HELPER ==================================
+
+function exceptionHandler (Throwable \$error) : string {
+   if (\$error instanceof mysqli_sql_exception) {
+      \$message =  "🔴 Database error 🔴\n" . \$error->getMessage();
+   } elseif (\$error instanceof PDOException) {
+      \$message = "🛢️ PDO error 🛢️\n" . \$error->getMessage();
+   } elseif (\$error instanceof InvalidArgumentException) {
+      \$message = "⚠️ Argumen tidak valid ⚠️\n" . \$error->getMessage();
+   } elseif (\$error instanceof OutOfBoundsException) {
+      \$message = "📏 Indeks di luar batas 📏\n" . \$error->getMessage();
+   } elseif (\$error instanceof LengthException) {
+      \$message = "📐 Panjang data tidak sesuai 📐\n" . \$error->getMessage();
+   } elseif (\$error instanceof RuntimeException) {
+      \$message = "🧨 Runtime exception 🧨\n" . \$error->getMessage();
+   } elseif (\$error instanceof LogicException) {
+      \$message = "🧠 Logic error 🧠\n" . \$error->getMessage();
+   } elseif (\$error instanceof TypeError) {
+      \$message = "❌ Tipe data salah ❌\n" . \$error->getMessage();
+   } elseif (\$error instanceof ParseError) {
+      \$message = "🔤 Kesalahan sintaksis 🔤\n" . \$error->getMessage();
+   } elseif (\$error instanceof DivisionByZeroError) {
+      \$message = "➗ Pembagian dengan nol ➗\n" . \$error->getMessage();
+   } elseif (\$error instanceof AssertionError) {
+      \$message = "🔒 Gagal pada assert() 🔒\n" . \$error->getMessage();
+   } else {
+      \$message = "💥 Error tidak diketahui 💥\n" . \$error->getMessage();
+   }
+   \$formatMessage =  php_sapi_name() === "cli" 
+   ?  \$message 
+   :  nl2br(htmlspecialchars("\n".\$message."\n"));
+
+   echo strtoupper(\$formatMessage);
+   exit;
+}
+EOL
+
+echo "[✓] file $DATANAME-database/script/helper/utils.php [✓]"
 echo ""
 echo "[✓] SCRIPT DONE [✓]"

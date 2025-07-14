@@ -126,6 +126,7 @@
     "disubmit",
     "echo",
     "empty",
+    "endforeach",
     "execute",
     "exit",
     "explode",
