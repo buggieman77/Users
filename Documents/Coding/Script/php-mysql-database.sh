@@ -152,7 +152,7 @@ echo "[✓] file $DATANAME-database/pages/create-page.php [✓]"
 cat <<EOL > "$DATANAME-database/pages/read-page.php"
 <?php 
 require __DIR__ . "/../script/mysql-database.php";
-\$${DATANAME}s = runSqlCommand("select", "all");
+\$${DATANAME}s = isset(\$_POST["keyword"]) ? runSqlCommand("select", "keyword") : runSqlCommand("select", "all");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -162,10 +162,17 @@ require __DIR__ . "/../script/mysql-database.php";
    <title><?= DISPLAY_DB_NAME ?> Data Manager</title>
 </head>
 <body>
+   <br>
    <form action="add-new-<?= LOWER_DISPLAY_DB_NAME ?>" method="post"> 
       <input type="hidden" name="access" value="<?= CREATE_ACCESS ?>" />
       <button type="submit">Add New <?= DISPLAY_DB_NAME ?></button>
    </form>
+   <br>
+   <form action="" method="post"> 
+      <input type="text" name="keyword" value="<?= htmlspecialchars(trim(\$_POST["keyword"] ?? null))?>" autocomplete="off" size="30" />
+      <button type="submit">Search <?= DISPLAY_DB_NAME ?></button>
+   </form>
+
    <br><hr><br>
 
    <?php foreach (\$${DATANAME}s as \$index => \$$DATANAME) : ?>
@@ -180,9 +187,9 @@ require __DIR__ . "/../script/mysql-database.php";
    <br>
       <?php for (\$i = 1 ; \$i <= 2 ; \$i++) : ?>
 
-      <form action="<?= \$i == 1 ? "update" : "delete" ?>-<?= \$$DATANAME[PRIMARY_FIELD] ?>" method="post">
+      <form action="<?= \$i == 1 ? "update" : "delete" ?>-<?= slugify(\$$DATANAME[PRIMARY_FIELD]) ?>" method="post">
          <input type="hidden" name="access" value="<?= \$i == 1 ? UPDATE_ACCESS : DELETE_ACCESS ?>" />
-         <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
+         <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_KEY] ?>">
          <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
          <button type="submit" name="confirm"><?= \$i == 1 ? "EDIT" : "DELETE" ?></button>
       </form>
@@ -312,11 +319,11 @@ function checkFormAccess(string \$access, string \$method = "post"): void
 function runSqlCommand(string \$keyword, mixed ...\$fieldList): array | int 
 {
    try {
+      
       // @params (string sqlString, array values, string types, bool hasBindParams, bool isSelectCommand)
       extract(buildSqlComponent(\$keyword, \$fieldList));
       // @params (mysqli connection, mysqli_stmt statement)
       extract(prepareStatement(\$sqlString, \$types, \$values, \$hasBindParams));
-
       // @return (fetch assoc array) or @return (total affected row)
       \$result = \$isSelectCommand ? executeAndFetch(\$statement) : executeBoundStatement(\$statement);
       // close statement and connection
@@ -332,17 +339,18 @@ function buildSqlComponent(string \$keyword, array \$fieldList): array
    // @params (string command, array fields)
    extract(normalizeParam(\$keyword, \$fieldList));
 
-   // @return (bool isSelectCommand, bool hasBindParams) and @flag (bool hasPrimaryKey)
+   // @return (bool isSelectCommand, bool hasBindParams)
+   // @param (bool isKeyword bool hasPrimaryKey)
    extract(setSqlFlag(\$command, \$fields));
 
    // @params (array sortedField, array escapedField) only escape field not primary key
-   extract(fieldsHandler(\$fields, \$hasPrimaryKey));
+   extract(fieldsHandler(\$fields, \$hasPrimaryKey, \$isKeyword));
    
    // @return (array value, string types)
-   extract(getInputData(\$sortedField));
+   extract(getInputData(\$sortedField, \$isKeyword));
 
    // @return sql string template
-   \$sqlString = createSqlString(\$command, \$escapedField, \$hasBindParams);
+   \$sqlString = createSqlString(\$command, \$escapedField, \$hasBindParams, \$isKeyword);
 
    return [
       "sqlString" => \$sqlString,
@@ -402,8 +410,10 @@ function executeAndFetch(mysqli_stmt \$statement): array
       \$result[] = \$row;
    }
 
-   if (empty(\$result)) 
-   throw new mysqli_sql_exception("Data is empty".\$identifier);
+   if (empty(\$result)) {
+      echo "data tidak ditemukan";
+      return runSqlCommand("select","all");
+   }
 
    return \$result;
 }
@@ -471,7 +481,7 @@ function normalizeParam(string \$keyword, array \$fieldList): array
 {
    // @return normalize keyword to lower case
    \$normalizedKeyword = strtolower(\$keyword);
-
+ 
    // unwrap nested array
    \$isNestedArray = (is_array(\$fieldList[0]) && count(\$fieldList) === 1);
    \$flatFieldList = \$isNestedArray ? \$fieldList[0] : \$fieldList;
@@ -485,20 +495,25 @@ function normalizeParam(string \$keyword, array \$fieldList): array
 
 function setSqlFlag(string \$command, array \$fields): array 
 {
-  // @return flag set (select command, has bind parameters, has primary key)
+   // @return flag set (isSelectCommand, isKeyword, hasBindParams, hasPrimaryKey)
    \$SelectCommandFlag =  (\$command === "select");
+   \$keywordCommandFlag =  (\$SelectCommandFlag && \$fields[0] === "keyword");
    \$BindParamsFlag = !(count(\$fields) === 1 && is_string(\$fields[0]) && strtolower(\$fields[0]) === "all");
    \$includePrimaryKeyFlag = (in_array(PRIMARY_KEY, \$fields));
 
    return [
       "isSelectCommand" => \$SelectCommandFlag,
+      "isKeyword" => \$keywordCommandFlag,
       "hasBindParams" => \$BindParamsFlag,
       "hasPrimaryKey" => \$includePrimaryKeyFlag 
    ];
 }
 
-function fieldsHandler(array \$fields, bool \$hasPrimaryKey): array 
+function fieldsHandler(array \$fieldsList, bool \$hasPrimaryKey, bool \$isKeyword): array 
 {
+   // @params (array inputFieldList)
+   \$fields = \$isKeyword ? VISIBLE_FIELD : \$fieldsList;
+  
    // unset primary key from field array
    \$filter = fn(\$field) => \$field !== PRIMARY_KEY;
    \$filteredField =  \$hasPrimaryKey ? array_filter(\$fields, \$filter) : \$fields;
@@ -513,16 +528,18 @@ function fieldsHandler(array \$fields, bool \$hasPrimaryKey): array
    return ["sortedField" => \$reorderField, "escapedField" => \$escapedReserveWord ];
 }
 
-function getInputData(array \$sortedField): array 
+function getInputData(array \$sortedField, bool \$isKeyword): array 
 {
    // adjust request method
    \$isGetMethod = \$_SERVER["REQUEST_METHOD"] === strtoupper("get");
    \$rawInput= \$isGetMethod ? \$_GET : \$_POST;
 
-   // @return sanitize input from request method
-   \$sanitizeInput = fn(\$field) => htmlspecialchars(trim(\$rawInput[\$field] ?? \$field));
+   // @return sanitize input/value from request method
+   \$sanitizeInput = fn(\$field) => \$isKeyword 
+   ? "%".htmlspecialchars(trim(\$rawInput["keyword"] ?? ""))."%" 
+   : htmlspecialchars(trim(\$rawInput[\$field] ?? ""));
    \$sanitizedInput = array_map(\$sanitizeInput, \$sortedField);
-
+   
    // @return infer type each input
    \$inputTypes = inferInputType(\$sanitizedInput);
 
@@ -550,22 +567,22 @@ function inferInputType(array \$sanitizedInput): string
    return \$types;
 }
 
-function createSqlString(string \$command, array \$escapedField, bool \$hasBindParams): string 
+function createSqlString(string \$command, array \$escapedField, bool \$hasBindParams, bool \$isKeyword): string 
 {
-   // @params (string columns, string placeholders, setClause)
+   // @params (string fields, string placeholders,string setClause, string keywordClause, string primaryKeyClause)
    extract(createPlaceholder(\$escapedField));
 
    // @return create sql string template according command
    if (!\$hasBindParams) return "SELECT * FROM ".DB_TABLE_NAME;
    switch(\$command) {
       case "insert" :
-         return sprintf("INSERT INTO %s (%s) VALUES (%s)", DB_TABLE_NAME, \$columns, \$placeholders);
+         return sprintf("INSERT INTO \`%s\` (%s) VALUES (%s)", DB_TABLE_NAME, \$fields, \$placeholders);
       case "update" :
-         return sprintf("UPDATE \`%s\` SET %s WHERE \`%s\` = ?", DB_TABLE_NAME, \$setClause, PRIMARY_KEY);
+         return sprintf("UPDATE \`%s\` SET %s WHERE %s", DB_TABLE_NAME, \$setClause, \$primaryKeyClause);
       case "delete" :
-         return sprintf("DELETE FROM \`%s\` WHERE \`%s\` = ?", DB_TABLE_NAME, PRIMARY_KEY);
+         return sprintf("DELETE FROM \`%s\` WHERE %s", DB_TABLE_NAME, \$primaryKeyClause);
       case "select" :
-         return sprintf("SELECT * FROM \`%s\` WHERE \`%s\` = ?", DB_TABLE_NAME, PRIMARY_KEY);
+         return sprintf("SELECT * FROM \`%s\` WHERE %s", DB_TABLE_NAME, \$isKeyword ? \$keywordClause : \$primaryKeyClause);
       default :
          throw new InvalidArgumentException(\$command." command is not found\n[ ".__FUNCTION__." ]");
    }
@@ -573,23 +590,44 @@ function createSqlString(string \$command, array \$escapedField, bool \$hasBindP
 
 function createPlaceholder(array \$escapedField): array 
 {
-   // @return columns template (escape from sql reserved word)
-   \$columnsPlaceholder = implode(", ", \$escapedField);
+   // @return fields template (escape from sql reserved word)
+   \$fieldsPlaceholder = implode(", ", \$escapedField);
    // @return question mark placeholder for value
    \$valuePlaceholders = implode(", ", array_fill(0, count(\$escapedField), "?"));
-   // @return clause placeholder for set
+   // @return clause placeholder for update set
    \$setPlaceholder = implode(", ", array_map(fn(\$field) => "\$field = ?", \$escapedField));
-   
+   // @return keyword placeholder for select where
+   \$keywordPlaceholder = implode(" OR ", array_map(fn(\$field) => "\$field LIKE ?", \$escapedField));
+   // @return where placeholder 
+   \$primaryKeyPlaceholder = "\`".PRIMARY_KEY."\` = ?";
+
    return [
-      "columns" => \$columnsPlaceholder,
+      "fields" => \$fieldsPlaceholder,
       "placeholders" => \$valuePlaceholders,
-      "setClause" => \$setPlaceholder
+      "setClause" => \$setPlaceholder,
+      "keywordClause" => \$keywordPlaceholder,
+      "primaryKeyClause" => \$primaryKeyPlaceholder
    ];
 }
 
 // ================================== HELPER ==================================
 
+function slugify(\$text): string 
+{  
+   // Transliterate
+   \$text = iconv("UTF-8", "ASCII//TRANSLIT", \$text);
+   // Replace non letter/digit
+   \$text = preg_replace("/[^\p{L}\p{N}_\-]+/u", "", \$text);
+   // Trim dash at the beginning and end
+   \$text = trim(\$text,"-");
+   // Convert to lower case(latin) 
+   \$text = strtolower(\$text);
+   // @return (string by urlencode function)
+   return rawurlencode(\$text);
+}
+
 function exceptionHandler (Throwable \$error) : string {
+   // Menampilkan error sesuai jenis exception
    if (\$error instanceof mysqli_sql_exception) {
       \$message =  "🔴 Database error 🔴\n" . \$error->getMessage();
    } elseif (\$error instanceof PDOException) {
@@ -615,6 +653,8 @@ function exceptionHandler (Throwable \$error) : string {
    } else {
       \$message = "💥 Error tidak diketahui 💥\n" . \$error->getMessage();
    }
+
+   // Formatting pesan sesuai mode CLI atau Web
    \$formatMessage =  php_sapi_name() === "cli" 
    ?  \$message 
    :  nl2br(htmlspecialchars("\n".\$message."\n"));
