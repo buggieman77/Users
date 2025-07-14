@@ -178,23 +178,20 @@ require __DIR__ . "/../script/mysql-database.php";
    </section>
    
    <br>
-   <form action="update-<?= \$$DATANAME[PRIMARY_FIELD]?>" method="post">
-      <input type="hidden" name="access" value="<?= UPDATE_ACCESS ?>" />
-      <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_KEY] ?>">
-      <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
-      <button type="submit" name="confirm">EDIT</button>
-   </form>
-   <br>
+      <?php for (\$i = 1 ; \$i <= 2 ; \$i++) : ?>
 
-   <form action="delete-<?= \$$DATANAME[PRIMARY_FIELD] ?>" method="post">
-      <input type="hidden" name="access" value="<?= DELETE_ACCESS ?>" />
-      <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_KEY] ?>">
-      <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
-      <button type="submit" name="confirm" value="delete">DELETE</button>
-   </form>
-   <br>
+      <form action="<?= \$i == 1 ? "update" : "delete" ?>-<?= \$$DATANAME[PRIMARY_FIELD] ?>" method="post">
+         <input type="hidden" name="access" value="<?= \$i == 1 ? UPDATE_ACCESS : DELETE_ACCESS ?>" />
+         <input type="hidden" name="<?= PRIMARY_KEY ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
+         <input type="hidden" name="<?= PRIMARY_FIELD ?>" value="<?= \$$DATANAME[PRIMARY_FIELD] ?>">
+         <button type="submit" name="confirm"><?= \$i == 1 ? "EDIT" : "DELETE" ?></button>
+      </form>
+      <br>
+      
+      <?php endfor ?>
    
    <?php endforeach ?>
+
 <?php
 \$isDelete = isset(\$_POST["confirm"]) && \$_POST["confirm"] === "delete";
 
