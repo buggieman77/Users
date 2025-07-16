@@ -16,7 +16,9 @@
    "SUBMIT BUTTON ": {
       "prefix": "formel",
       "body": [
-         "<button type=\"submit\" name=\"submit\">${0}</button>"
+         "<form action=\"${1}\" method=\"${2:post}\">",
+         "  <button type=\"submit\" name=\"${3}\">${0}</button>",
+         "</form>"
       ],
       "description": "Form Element"
    },
@@ -32,20 +34,31 @@
    "PHP TAG": {
       "prefix": "php",
       "body": [
-         "<?php",
-         "",
-         "${0}",
-         "",
-         "?>"
+         "<?php ${0} ?>"
       ],
       "description": "insert php tag"
    },
    "PHP ECHO TAG": {
       "prefix": "php",
       "body": [
-         "<?= \\$${0} ?>"
+         "<?= ${0} ?>"
       ],
       "description": "insert php echo"
+   },
+   "PHP FOREACH FORM TAG": {
+      "prefix": "php",
+      "body": [
+         "<form action=\"${1}\" method=\"${2:post}\">",
+         "",
+         "  <?php foreach(\\$input as \\$key => \\$value) : ?>",
+         "  <label for=\"<?= \\$key ?>\"><?= \\$value ?> :</label>",
+         "  <input type=\"text\" id=\"<?= \\$key ?>\" placeholder=\"<?= \\$value ?>\" name=\"<?= \\$key ?>\" value=\"<?= htmlspecialchars(trim(\\$_${3:POST}[\\$key] ?? null)) ?>\"  required>",
+         "  <?php endforeach ?>",
+         "",
+         "  <button type=\"submit\" name=\"${4}\">${0}</button>",
+         "</form>"
+      ],
+      "description": "insert php foreach"
    },
    "CREATE FORM ACCESS BUTTON": {
       "prefix": "mysql",

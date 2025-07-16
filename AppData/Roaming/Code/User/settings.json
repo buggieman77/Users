@@ -56,12 +56,13 @@
   "terminal.integrated.defaultProfile.windows": "Git Bash",
   "window.title": "${dirty}${rootName}${separator}${profileName}${separator}${activeEditorShort}",
   "workbench.settings.showSuggestions": true,
-  "editor.inlineSuggest.enabled": true,
   "editor.quickSuggestions": {
     "other": true,
-    "comments": true,
-    "strings": true
+    "comments": false,
+    "strings": false
   },
+  "editor.snippetSuggestions": "inline",
+  "editor.suggest.showSnippets": true,
   "editor.suggestOnTriggerCharacters": true,
   "editor.wordBasedSuggestions": "allDocuments",
   "editor.hover.enabled": true,
@@ -91,8 +92,6 @@
     "scminput": false,
     "php": false
   },
-  "editor.snippetSuggestions": "inline",
-  "editor.suggest.showSnippets": true,
   "[snippets]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
@@ -181,6 +180,7 @@
     "rtrim",
     "session_destroy",
     "session_start",
+    "signup",
     "ssib",
     "strlen",
     "strtolower",
