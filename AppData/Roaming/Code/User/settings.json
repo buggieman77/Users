@@ -61,10 +61,10 @@
     "comments": false,
     "strings": false
   },
-  "editor.snippetSuggestions": "inline",
+  "editor.snippetSuggestions": "top",
   "editor.suggest.showSnippets": true,
   "editor.suggestOnTriggerCharacters": true,
-  "editor.wordBasedSuggestions": "allDocuments",
+  "editor.wordBasedSuggestions": "off",
   "editor.hover.enabled": true,
   "bootstrapIntelliSense": {
     "enable": false,

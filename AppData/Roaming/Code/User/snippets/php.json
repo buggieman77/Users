@@ -1,5 +1,5 @@
    {
-      "Try and Catch Error": {
+      "TRY AND CATCH": {
          "prefix": "trc",
          "body": [
             "try {",
@@ -10,7 +10,7 @@
          ],
          "description": "error handling"
       },
-      "Array Assoc": {
+      "ASSOC ARRAY": {
          "prefix": "arr",
          "body": [
             "\\$${1:array} = [",
@@ -20,31 +20,33 @@
          ],
          "description": "create array assoc"
       },
-      "Array Numeric": {
+      "NUMERIC ARRAY": {
          "prefix": "arr",
          "body": [
             "\\$${1:array} = [${0}]",
          ],
          "description": "create array Numeric"
       },
-      "var_dump": {
-         "prefix": "var",
+      "VAR_DUMP": {
+         "prefix": "var_dump",
          "body": [
             "var_dump(\\$${0}); die;"
          ],
-         "description": "create array Numeric"
+         "description": "create var dump"
       },
-      "function skeleton": {
-         "prefix": "var",
+      "FUNCTION SKELETON": {
+         "prefix": "function",
          "body": [
-            "function ${1}(${2} \\$${3}): ${4}",
+            "function ${1}(${2:mixed} \\$${3}): ${4:mixed}",
             "{",
             "   ${0}",
+            "",
+            "   return ${5:true}",
             "}",
          ],
          "description": "create function skeleton"
       },
-      "foreach skeleton": {
+      "FOREACH SKELETON": {
          "prefix": "foreach",
          "body": [
             "foreach(\\$${1} as \\$${2:key} => \\$${3:value}) {",
