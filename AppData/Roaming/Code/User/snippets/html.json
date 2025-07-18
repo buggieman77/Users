@@ -52,12 +52,21 @@
          "",
          "  <?php foreach(\\$input as \\$index => \\$value) : ?>",
          "  <label for=\"<?= \\$value ?>\"><?= \\$value ?> :</label>",
-         "  <input type=\"text\" id=\"<?= \\$value ?>\" placeholder=\"<?= \\$value ?>\" name=\"<?= \\$value ?>\" value=\"<?= htmlspecialchars(trim(\\$_${3:POST}[\\$value] ?? null)) ?>\"  required>",
+         "  <input type=\"text\" id=\"<?= \\$value ?>\" placeholder=\"<?= \\$value ?>\" name=\"<?= \\$value ?>\" value=\"<?= htmlspecialchars(trim(\\$_${3:POST}[\\$value] ?? null)) ?>\" autocomplete=\"off\" required>",
          "  <?php endforeach ?>",
          "",
          "  <button type=\"submit\" name=\"${4}\">${0}</button>",
          "</form>"
       ],
       "description": "php foreach"
+   },
+   "PHP IF TAG": {
+      "prefix": "php",
+      "body": [
+         "<?php if (${1}) : ?>",
+         "   ${0}",
+         "<?php endif ?>"
+      ],
+      "description": "insert php echo"
    },
 }

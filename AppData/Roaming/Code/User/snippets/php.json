@@ -27,12 +27,19 @@
          ],
          "description": "create array Numeric"
       },
-      "VAR_DUMP": {
+      "VAR_DUMP SKELETON": {
          "prefix": "var_dump",
          "body": [
             "var_dump(\\$${0}); die;"
          ],
-         "description": "create var dump"
+         "description": "create var dump skeleton"
+      },
+      "ISSET SKELETON": {
+         "prefix": "isset",
+         "body": [
+            "isset(\\$${0})"
+         ],
+         "description": "create isset skeleton"
       },
       "FUNCTION SKELETON": {
          "prefix": "function",
@@ -41,7 +48,7 @@
             "{",
             "   ${0}",
             "",
-            "   return ${5:true}",
+            "   return ${5:true};",
             "}",
          ],
          "description": "create function skeleton"
@@ -54,5 +61,20 @@
             "}",
          ],
          "description": "create foreach skeleton"
+      },
+      "HEADER FUNCTION SKELETON": {
+         "prefix": "header",
+         "body": [
+            "header(\"Location: ${0}\", true, 302);",
+            "exit;"
+         ],
+         "description": "header function skeleton"
+      },
+      "IF SKELETON": {
+         "prefix": "if",
+         "body": [
+            "if (${1}) ${0}"
+         ],
+         "description": "IF skeleton"
       },
    }
