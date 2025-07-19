@@ -15,7 +15,6 @@
   "editor.cursorBlinking": "expand",
   "editor.mouseWheelZoom": true,
   "workbench.iconTheme": "vscode-icons",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "workbench.sideBar.location": "right",
   "editor.lineHeight": 27,
@@ -32,7 +31,7 @@
   "zenMode.fullScreen": false,
   "vetur.format.options.tabSize": 4,
   "editor.detectIndentation": false,
-  "editor.tabSize": 3,
+  "editor.tabSize": 2,
   "workbench.colorTheme": "Parsinta Exclusive",
   "glassit.alpha": 200,
   "emmet.includeLanguages": {
@@ -95,8 +94,10 @@
   "[snippets]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
+  "editor.formatOnType": true,
+  // "php-cs-fixer.executablePathWindows": "C:\\php-tools\\php-cs-fixer.bat",
   "[php]": {
-    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
   },
   "terminal.integrated.fontSize": 13,
   "genieai.enableConversationHistory": true,
@@ -159,6 +160,7 @@
     "microtime",
     "mkdir",
     "mktime",
+    "mpdf",
     "mysqli",
     "mysqli_close",
     "mysqli_connect",
@@ -218,5 +220,6 @@
     "cpp": true
   },
   "cSpell.checkOnlyEnabledFileTypes": true,
-  "window.menuBarVisibility": "toggle"
+  "window.menuBarVisibility": "toggle",
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -90,9 +90,12 @@ alias buggieman77='cat ~/Documents/Erensa/buggieman77.txt'
 alias account='start notepad ~/Documents/Erensa/account.txt'
 alias see='start notepad ~/Documents/Coding/Script/alias-list.txt'
 
+alias php-cs-fixer='php /c/php-tools/php-cs-fixer.phar'
+
 export PATH=$PATH:/c/Program\ Files/GitHub\ CLI
 export PATH=$PATH:/c/Program\ Files/Microsoft\ VS\ Code/bin
 export PATH=$PATH:/c/xampp/mysql/bin
+export PATH=$PATH:/c/php-tools
 
 # Fungsi untuk mengubah nama tab di Git Bash sesuai basename PWD, pakai huruf besar
 set_tab_title() {
