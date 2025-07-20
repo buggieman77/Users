@@ -1,31 +1,46 @@
 {
-   "CONSOLE INFO SKELETON": {
-      "prefix": "console",
-      "body": [
-         "console.info(${0});"
-      ],
-      "description": "console info"
-   },
-   "XHR SKELETON": {
-      "prefix": "xhr",
-      "body": [
-         "const xhr = new XMLHttpRequest();",
-         "",
-         "const ${1:readyState} = () => {",
-         "   if (xhr.readyState == 4 && xhr.status == 200) {",
-         "      ${0:console.info(responseText)}",
-         "   };",
-         "",
-         "const ${2:executeAjax} = () => {",
-         "   xhr.onreadystatechange = ${1:readyState};",
-         "   xhr.open(",
-         "      \"${3:GET}\",",
-         "      \"${4:src}\",",
-         "       true",
-         "   );",
-         "   xhr.send();",
-         "};",
-      ],
-      "description": "ajax skeleton"
-   },
+  "CONSOLE INFO SKELETON": {
+    "prefix": "console",
+    "body": [
+      "console.info(${0});"
+    ],
+    "description": "console info"
+  },
+  "XHR SKELETON": {
+    "prefix": "xhr",
+    "body": [
+      "const xhr = new XMLHttpRequest();",
+      "",
+      "const ${1:readyState} = () => {",
+      "   if (xhr.readyState == 4 && xhr.status == 200) {",
+      "      ${0:console.info(responseText)}",
+      "   };",
+      "",
+      "const ${2:executeAjax} = () => {",
+      "   xhr.onreadystatechange = ${1:readyState};",
+      "   xhr.open(",
+      "      \"${3:GET}\",",
+      "      \"${4:src}\",",
+      "       true",
+      "   );",
+      "   xhr.send();",
+      "};",
+    ],
+    "description": "ajax skeleton"
+  },
+  "FILE READER SKELETON": {
+    "prefix": "image preview",
+    "body": [
+      "const imageInput = document.querySelector(\".imageInput\")",
+      "const  imagePreview = document.querySelector(\".imagePreview\")",
+      "",
+      "const oFReader = new FileReader();",
+      "oFReader.readAsDataURL(imageInput.file[0]);",
+      "",
+      "oFReader.onload = function (oFREvent) {",
+      "  imagePreview.src = oFREvent.target.result;",
+      "}",
+    ],
+    "description": "console info"
+  },
 }
