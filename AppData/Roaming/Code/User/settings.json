@@ -56,7 +56,7 @@
   "window.title": "${dirty}${rootName}${separator}${profileName}${separator}${activeEditorShort}",
   "workbench.settings.showSuggestions": true,
   "editor.quickSuggestions": {
-    "other": false,
+    "other": true,
     "comments": false,
     "strings": false
   },
