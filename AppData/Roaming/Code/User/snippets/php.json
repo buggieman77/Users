@@ -48,7 +48,7 @@
         "{",
         "   ${0}",
         "",
-        "   return ${5:true};",
+        "   ${5:return true;}",
         "}",
       ],
       "description": "create function skeleton"

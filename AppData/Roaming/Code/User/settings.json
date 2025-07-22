@@ -66,7 +66,7 @@
   "editor.wordBasedSuggestions": "off",
   "editor.hover.enabled": true,
   "bootstrapIntelliSense": {
-    "enable": false,
+    "enable": true,
     "bsVersion": "5.3.6",
     "useLocalFile": false,
     "cssFilePath": "",
@@ -127,6 +127,7 @@
     "echo",
     "empty",
     "endforeach",
+    "ERRMODE",
     "execute",
     "exit",
     "explode",
@@ -197,7 +198,9 @@
     "unlink",
     "unset",
     "var_dump",
-    "xampp"
+    "wibu",
+    "xampp",
+    "yeremia"
   ],
   "cSpell.ignoreWords": ["apiurl", "axios"],
   "cSpell.enabledFileTypes": {
