@@ -56,9 +56,9 @@
     "FUNCTION __CONSTRUCT": {
       "prefix": "construct",
       "body": [
-        "public function __construct(${1:string} \\$${2})",
+        "public function __construct()",
         "{",
-        "   \\$this->${2} = \\$${2};${0}",
+        "   \\$this->${1} = \\$${2};${0}",
         "",
         "}",
       ],
@@ -99,6 +99,13 @@
       "prefix": "this",
       "body": [
         "\\$this->${0}"
+      ],
+      "description": "this skeleton"
+    },
+    "HTML SPECIAL CHAR": {
+      "prefix": "htmlspecialchars",
+      "body": [
+        "htmlspecialchars(trim(\\$${0}))",
       ],
       "description": "this skeleton"
     },
