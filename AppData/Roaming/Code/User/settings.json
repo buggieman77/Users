@@ -139,6 +139,7 @@
     "file_put_contents",
     "filter_input",
     "filter_var",
+    "flexbox",
     "fopen",
     "foreach",
     "fread",
@@ -201,6 +202,7 @@
     "unset",
     "urlencode",
     "var_dump",
+    "webp",
     "wibu",
     "xampp",
     "yeremia"
