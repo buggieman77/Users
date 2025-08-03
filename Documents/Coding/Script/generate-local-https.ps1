@@ -17,8 +17,8 @@ if (-Not (Test-Path $OutputDir)) {
 }
 
 Write-Host "`n=== Mulai proses generate sertifikat ==="
-Write-Host "📁 Folder output sertifikat domain: $OutputDir"
-Write-Host "🔐 Lokasi Root CA: $RootDir`n"
+Write-Host "Folder output sertifikat domain: $OutputDir"
+Write-Host "Lokasi Root CA: $RootDir`n"
 
 # === DEFAULT VALUE UNTUK SUBJEK ===
 $DefaultCountry = "ID"
@@ -52,19 +52,17 @@ $RootSubj = "/C=$Country/ST=$State/L=$City/O=$Org/CN=$CommonNameRoot"
 $LocalhostSubj = "/C=$Country/ST=$State/L=$City/O=$Org/CN=$CommonNameLocalhost"
 
 # === GENERATE ROOT CA HANYA JIKA BELUM ADA ===
-if (-Not (Test-Path $RootKey -and Test-Path $RootCert)) {
-    Write-Host "`n🔧 Root CA belum ada. Membuat rootCA.key dan rootCA.pem ..."
+if (-Not ((Test-Path $RootKey) -and (Test-Path $RootCert))) {
+    Write-Host "Root CA belum ada. Membuat rootCA.key dan rootCA.pem ..."
     if (-Not (Test-Path $RootDir)) {
         New-Item -ItemType Directory -Path $RootDir | Out-Null
     }
-
     # === ROOT PRIVATE KEY ===
     openssl genrsa -out $RootKey 2048
-
     # === ROOT CERTIFICATE (SELF SIGNED) ===
     openssl req -x509 -new -nodes -key $RootKey -sha256 -days 3650 -out $RootCert -subj $RootSubj
 } else {
-    Write-Host "✅ Root CA sudah ada, tidak perlu membuat ulang."
+    Write-Host " Root CA sudah ada, tidak perlu membuat ulang."
 }
 
 # === SET PATH FILE LOCALHOST ===
@@ -80,21 +78,22 @@ openssl genrsa -out $LocalhostKey 2048
 openssl req -new -key $LocalhostKey -out $LocalhostCsr -subj $LocalhostSubj
 
 # === BUAT FILE EXTENSION UNTUK SAN ===
-@"
+$extContent = @'
 authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
 keyUsage=digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment
 subjectAltName=@alt_names
 
 [alt_names]
-DNS.1=$CommonNameLocalhost
-"@ | Out-File -Encoding ASCII $LocalhostExt
+DNS.1=localhost
+'@
+Set-Content -Encoding ASCII -Path $LocalhostExt -Value $extContent
 
 # === TANDA TANGANI CSR MENGGUNAKAN ROOT CA ===
 openssl x509 -req -in $LocalhostCsr -CA $RootCert -CAkey $RootKey -CAcreateserial -out $LocalhostCert -days 3650 -sha256 -extfile $LocalhostExt
 
 # === DONE ===
-Write-Host "`n✅ Selesai!"
-Write-Host "📁 Semua file untuk '$CommonNameLocalhost' disimpan di: $OutputDir"
-Write-Host "🗝️  Root CA tetap berada di: $RootDir"
-Write-Host "➡️  Langkah selanjutnya: Import $RootCert ke Certificate Manager (certmgr.msc) -> Trusted Root Certification Authorities -> alltask -> import"
+Write-Host "Selesai!"
+Write-Host "Semua file untuk '$CommonNameLocalhost' disimpan di: $OutputDir"
+Write-Host " Root CA tetap berada di: $RootDir"
+Write-Host "Langkah selanjutnya: Import $RootCert ke Certificate Manager (certmgr.msc) -> Trusted Root Certification Authorities -> alltask -> import"
