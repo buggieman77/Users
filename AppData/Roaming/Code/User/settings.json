@@ -127,6 +127,7 @@
     "echo",
     "empty",
     "endforeach",
+    "erensa",
     "ERRMODE",
     "execute",
     "exit",

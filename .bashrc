@@ -13,7 +13,10 @@ alias script='explorer.exe "$(cygpath -w ~/Documents/Coding/Script)"'
 alias test-script='bash ~/Documents/Coding/Script/test-script.sh'
 alias new-script='code ~/Documents/Coding/Script/test-script.sh'
 
-alias snippet='cd ~/Users/erensa/AppData/Roaming/Code/User/snippets'
+alias snippet='code ~/AppData/Roaming/Code/User/snippets/erensa.code-snippets'
+alias js-snippet='code ~/.vscode/extensions/dsznajder.es7-react-js-snippets-4.4.3/lib/snippets/generated.json'
+alias js-snippet-list='explorer "https://github.com/r5n-labs/vscode-react-javascript-snippets/blob/185bb91a0b692c54136663464e8225872c434637/docs/Snippets.md"'
+
 alias htdocs-dir='cd /c/xampp/htdocs'
 alias htdocs='explorer.exe "$(cygpath -w /c/xampp/htdocs)"'
 

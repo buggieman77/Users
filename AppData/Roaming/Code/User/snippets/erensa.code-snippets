@@ -1,0 +1,28 @@
+{
+  "typeofSnippet": {
+    "description": "typeofSnippet",
+    "prefix": "tpf",
+    "body": [
+      "typeof ${1:first}"
+    ],
+    "scope": "typescript,typescriptreact,javascript,javascriptreact"
+  },
+  "reactFunctionalExportComponent": {
+    "prefix": "rfc",
+    "body": [
+      "// import { useState } from 'react'",
+      "",
+      "function ${TM_FILENAME_BASE}() {",
+      "  return (",
+      "    <>",
+      "    ${0}",
+      "    </>",
+      "  )",
+      "}",
+      "",
+      "export default ${TM_FILENAME_BASE}"
+    ],
+    "description": "Creates a React Functional Component with ES7 module system",
+    "scope": "typescript,typescriptreact,javascript,javascriptreact"
+  },
+}
